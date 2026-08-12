@@ -226,15 +226,16 @@
         \begin{beamercolorbox}[sep=6pt,center,colsep=-4bp,rounded=true,shadow=true]{institute}
             \usebeamerfont{institute}\insertinstitute
         \end{beamercolorbox}
+        \vskip0.3em
+        {\usebeamercolor[fg]{titlegraphic}\inserttitlegraphic\par}
         \ifx\committeelist\@undefined%
         \else%
             \vskip0.3em%
-            {\footnotesize\color{themecolor}Committee: \committeelist\par}%
+            {\tiny\color{themecolor}Committee: \committeelist\par}%
         \fi%
         \begin{beamercolorbox}[sep=6pt,center,colsep=-4bp,rounded=true,shadow=true]{date}
             \usebeamerfont{date}\insertdate
-        \end{beamercolorbox}\vskip0.3em
-        {\usebeamercolor[fg]{titlegraphic}\inserttitlegraphic\par}
+        \end{beamercolorbox}
     \endgroup
     \vfill
 }
