@@ -201,7 +201,7 @@
 \makeatother
 
 % Titlepage logo
-\titlegraphic{\includegraphics[height=1.6cm]{Figures/logo/umd-seal.png}}
+\titlegraphic{\includegraphics[height=1cm]{Figures/logo/umd-seal.png}}
 
 % Title page: move the subtitle out of the navy title box, below it.
 \setbeamercolor{subtitle}{fg=themecolor}
@@ -216,19 +216,24 @@
         \end{beamercolorbox}%
         \ifx\insertsubtitle\@empty%
         \else%
-            \vskip0.6em%
+            \vskip0.35em%
             {\usebeamerfont{subtitle}\usebeamercolor[fg]{subtitle}\insertsubtitle\par}%
         \fi%
-        \vskip1em\par
-        \begin{beamercolorbox}[sep=8pt,center,colsep=-4bp,rounded=true,shadow=true]{author}
+        \vskip0.5em\par
+        \begin{beamercolorbox}[sep=6pt,center,colsep=-4bp,rounded=true,shadow=true]{author}
             \usebeamerfont{author}\insertauthor
         \end{beamercolorbox}
-        \begin{beamercolorbox}[sep=8pt,center,colsep=-4bp,rounded=true,shadow=true]{institute}
+        \begin{beamercolorbox}[sep=6pt,center,colsep=-4bp,rounded=true,shadow=true]{institute}
             \usebeamerfont{institute}\insertinstitute
         \end{beamercolorbox}
-        \begin{beamercolorbox}[sep=8pt,center,colsep=-4bp,rounded=true,shadow=true]{date}
+        \ifx\committeelist\@undefined%
+        \else%
+            \vskip0.3em%
+            {\footnotesize\color{themecolor}Committee: \committeelist\par}%
+        \fi%
+        \begin{beamercolorbox}[sep=6pt,center,colsep=-4bp,rounded=true,shadow=true]{date}
             \usebeamerfont{date}\insertdate
-        \end{beamercolorbox}\vskip0.5em
+        \end{beamercolorbox}\vskip0.3em
         {\usebeamercolor[fg]{titlegraphic}\inserttitlegraphic\par}
     \endgroup
     \vfill
