@@ -160,7 +160,7 @@
 %         \includegraphics[height=1cm]{Figures/logo/logo.png}
 %     \end{textblock*}}
 
-\definecolor{themecolor}{RGB}{228,105,71}
+\definecolor{themecolor}{RGB}{20,49,95}
 \mode<presentation>
 {
     \usetheme{Madrid}      % or try Darmstadt, Madrid, Warsaw, ...
@@ -170,6 +170,25 @@
     \setbeamertemplate{caption}[default]
     \setbeamertemplate{items}[default]
     \setbeamertemplate{section in toc}[ball unnumbered]
+}
+
+% Footline: title -- author -- page number (no institute, no date), unified navy bar
+\setbeamercolor{title in head/foot}{fg=white,bg=themecolor}
+\setbeamercolor{author in head/foot}{fg=white,bg=themecolor}
+\setbeamercolor{date in head/foot}{fg=white,bg=themecolor}
+\setbeamertemplate{footline}{
+    \leavevmode%
+    \hbox{%
+    \begin{beamercolorbox}[wd=.4\paperwidth,ht=2.25ex,dp=1ex,left,leftskip=2ex]{title in head/foot}%
+        \usebeamerfont{title in head/foot}\color{white}{\hypersetup{linkcolor=white}\insertshorttitle}
+    \end{beamercolorbox}%
+    \begin{beamercolorbox}[wd=.4\paperwidth,ht=2.25ex,dp=1ex,center]{author in head/foot}%
+        \usebeamerfont{author in head/foot}\color{white}\insertshortauthor
+    \end{beamercolorbox}%
+    \begin{beamercolorbox}[wd=.2\paperwidth,ht=2.25ex,dp=1ex,right,rightskip=2ex]{date in head/foot}%
+        \usebeamerfont{date in head/foot}\color{white}\insertframenumber
+    \end{beamercolorbox}}%
+    \vskip0pt%
 }
 \let\oldfootnote\footnote
 \renewcommand\footnote[1][]{\oldfootnote[frame,#1]}
