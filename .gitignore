@@ -13,7 +13,6 @@
 *.synctex.gz
 *.toc
 *.vrb
-main.pdf
 
 ## macOS
 .DS_Store
