@@ -214,28 +214,26 @@
         \begin{beamercolorbox}[sep=8pt,center,colsep=-4bp,rounded=true,shadow=true]{title}
             \usebeamerfont{title}\inserttitle\par
         \end{beamercolorbox}%
-        \ifx\insertsubtitle\@empty%
-        \else%
-            \vskip0.35em%
-            {\usebeamerfont{subtitle}\usebeamercolor[fg]{subtitle}\insertsubtitle\par}%
-        \fi%
         \vskip0.5em\par
         \begin{beamercolorbox}[sep=6pt,center,colsep=-4bp,rounded=true,shadow=true]{author}
             \usebeamerfont{author}\insertauthor
         \end{beamercolorbox}
-        \begin{beamercolorbox}[sep=6pt,center,colsep=-4bp,rounded=true,shadow=true]{institute}
-            \usebeamerfont{institute}\insertinstitute
-        \end{beamercolorbox}
         \vskip0.3em
         {\usebeamercolor[fg]{titlegraphic}\inserttitlegraphic\par}
+        \ifx\insertsubtitle\@empty%
+        \else%
+            \vskip0.3em%
+            {\usebeamerfont{subtitle}\usebeamercolor[fg]{subtitle}\insertsubtitle\par}%
+        \fi%
+        \vskip0.3em
+        \begin{beamercolorbox}[sep=6pt,center,colsep=-4bp,rounded=true,shadow=true]{date}
+            \usebeamerfont{date}\insertdate
+        \end{beamercolorbox}
         \ifx\committeelist\@undefined%
         \else%
             \vskip0.3em%
             {\tiny\color{themecolor}Committee: \committeelist\par}%
         \fi%
-        \begin{beamercolorbox}[sep=6pt,center,colsep=-4bp,rounded=true,shadow=true]{date}
-            \usebeamerfont{date}\insertdate
-        \end{beamercolorbox}
     \endgroup
     \vfill
 }
