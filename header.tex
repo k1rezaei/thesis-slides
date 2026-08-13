@@ -238,3 +238,26 @@
     \vfill
 }
 \makeatother
+
+% Recurring roadmap slide: 3 boxes, one highlighted per occurrence.
+% Usage: \roadmap{1|2|3}
+\newcommand{\rmboxH}[1]{%
+    \begin{tcolorbox}[colback=themecolor,colframe=themecolor,coltext=white,boxrule=0pt,arc=2mm,valign=center,height=2.8cm]
+        \centering\bfseries #1
+    \end{tcolorbox}%
+}
+\newcommand{\rmboxN}[1]{%
+    \begin{tcolorbox}[colback=white,colframe=gray!40,coltext=gray!55,boxrule=1pt,arc=2mm,valign=center,height=2.8cm]
+        \centering #1
+    \end{tcolorbox}%
+}
+\newcommand{\roadmap}[1]{%
+    \begin{columns}[T,onlytextwidth]
+        \column{0.32\textwidth}
+        \ifnum#1=1 \rmboxH{Research Theme}\else\rmboxN{Research Theme}\fi
+        \column{0.32\textwidth}
+        \ifnum#1=2 \rmboxH{Knowledge Localization \& Model Editing}\else\rmboxN{Knowledge Localization \& Model Editing}\fi
+        \column{0.32\textwidth}
+        \ifnum#1=3 \rmboxH{Data Interpretability \& Machine Unlearning}\else\rmboxN{Data Interpretability \& Machine Unlearning}\fi
+    \end{columns}%
+}
