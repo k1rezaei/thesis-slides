@@ -70,8 +70,119 @@
     \roadmap{3}
 \end{frame}
 
-\begin{frame}{Unlearn}
-    % TODO
+\begin{frame}{Motivation: Data-Level Unlearning}
+    \begin{itemize}
+        \item LLMs are trained on web-scale corpora that can include \textcolor{themecolor}{\textbf{private, copyrighted, or incorrect}} information.
+        \item Retraining from scratch to exclude specific datapoints is \textbf{computationally infeasible} at scale.
+        \item \textbf{Data-level unlearning}: post-hoc modify a trained model $\theta_\mathcal{D}$ so it behaves as if it had never seen a forget set $\mathcal{D}_\text{f} \subset \mathcal{D}$.
+    \end{itemize}
+    \vspace{0.5em}
+    \begin{block}{Goal}
+        Given $\theta_\mathcal{D}$ and $\mathcal{D}_\text{f}$, produce a model functionally equivalent to one trained from scratch on $\mathcal{D} \setminus \mathcal{D}_\text{f}$ --- without the cost of retraining.
+    \end{block}
+    \vspace{0.3em}
+    Motivated by real needs: privacy regulation (e.g., the EU's \emph{Right to Be Forgotten}), correcting misinformation, and removing copyrighted content.
+\end{frame}
+
+\begin{frame}{RESTOR: A Benchmark for Restorative Unlearning}
+    Existing evaluations mostly ask: \emph{can the model still reproduce the forgotten information?}
+
+    \vspace{0.3em}
+    \RESTOR asks a stronger question: \textcolor{themecolor}{\textbf{does the model recover the knowledge it would have had if it had never seen the bad data?}}
+    \vspace{0.5em}
+    \begin{center}
+        \includegraphics[width=0.85\textwidth]{Figures/restor/teaser.png}
+    \end{center}
+\end{frame}
+
+\begin{frame}{RESTOR: How It's Built}
+    \begin{enumerate}
+        \item \textbf{Corruption:} inject $\sim$3{,}000 GPT-4-generated passages with incorrect facts about 50 entities (1{,}051 fact triples) into a clean model $\theta_\text{ideal}$, producing a corrupted model $\theta_\text{corrupted}$.
+        \item \textbf{Unlearning:} apply an unlearning algorithm to $\theta_\text{corrupted}$, using the corruption documents as the forget set, producing $\theta_\text{unlearned}$.
+        \item \textbf{Evaluation:} query $\theta_\text{ideal}$, $\theta_\text{corrupted}$, and $\theta_\text{unlearned}$ on the same factual questions, comparing generated answers and log-probabilities.
+    \end{enumerate}
+    \vspace{0.5em}
+    \begin{block}{Key idea}
+        Success isn't just \emph{forgetting} the corrupted facts --- it's \emph{recovering} the entity's correct value, matching $\theta_\text{ideal}$.
+    \end{block}
+\end{frame}
+
+\begin{frame}{RESTOR: Existing Methods Forget, but Don't Restore}
+    \begin{table}
+        \centering
+        \small
+        \begin{tabular}{c|c|ccc}
+            \toprule
+            & & \multicolumn{3}{c}{Unlearned} \\
+            \cmidrule(lr){3-5}
+            $k$ & Corrupted & GA & KL & NPO \\
+            \midrule
+            0 & 61.46 & 49.32 & 62.10 & \textbf{63.12} \\
+            1 & 50.71 & 42.17 & 45.16 & \textbf{64.92} \\
+            2 & 49.35 & 32.73 & 41.80 & \textbf{62.80} \\
+            3 & 50.36 & 34.85 & 47.52 & \textbf{63.95} \\
+            4 & 45.72 & 35.29 & 41.95 & \textbf{63.41} \\
+            5 & 44.45 & 38.03 & 44.65 & \textbf{63.91} \\
+            \bottomrule
+        \end{tabular}
+        \caption{\footnotesize Accuracy (\%) recovering entity knowledge. Clean model: 65.84\%. $k$ = amount of unrelated context mixed into the (un)learning documents.}
+    \end{table}
+    NPO nearly recovers clean performance across all $k$; Gradient Ascent (GA) and KL-Divergence forget the corrupted facts but fail to \emph{restore} them.
+\end{frame}
+
+\begin{frame}{Model State Arithmetic (MSA)}
+    Prior data-level unlearning methods operate \textbf{only on the final trained model} $\theta_\mathcal{D}$:
+    \begin{itemize}
+        \item \textbf{Gradient-based:} Gradient Ascent, GradDiff, KL-Divergence --- increase loss on the forget set.
+        \item \textbf{Preference-based:} NPO.
+        \item \textbf{Weight-space:} Task Vectors --- subtract a direction computed \emph{from the final model}.
+        \item \textbf{Others:} SatImp, RMU, UNDIAL.
+    \end{itemize}
+    \vspace{0.3em}
+    \begin{block}{Limitation}
+        All of these estimate the effect of $\mathcal{D}_\text{f}$ using a model that has \emph{already} internalized it --- entangled with everything else it has since learned.
+    \end{block}
+\end{frame}
+
+\begin{frame}{MSA: Use an Earlier Checkpoint}
+    \begin{center}
+        \includegraphics[width=0.95\textwidth]{Figures/msa/teaser.pdf}
+    \end{center}
+\end{frame}
+
+\begin{frame}{MSA: The Idea, Formally}
+    \begin{itemize}
+        \item Take checkpoint $C$ (weights $\theta_C$), saved \textbf{before} the model ever saw $\mathcal{D}_\text{f}$.
+        \vspace{0.5em}
+        \item Finetune $C$ on $\mathcal{D}_\text{f}$ to get a \emph{forget vector}:
+        \[ \vec\theta_\text{f} = \theta_C' - \theta_C, \]
+        where $\theta_C'$ is $C$ finetuned on $\mathcal{D}_\text{f}$.
+        \vspace{0.5em}
+        \item Subtract it from the final model:
+        \[ \theta_\text{unlearned} = \theta_\mathcal{D} - \alpha\, \vec\theta_\text{f}. \]
+    \end{itemize}
+    \vspace{0.5em}
+    \begin{block}{Why it works}
+        $C$ never saw $\mathcal{D}_\text{f}$, so $\vec\theta_\text{f}$ isolates its effect much more cleanly than a vector computed from the already-trained model $\theta_\mathcal{D}$.
+    \end{block}
+\end{frame}
+
+\begin{frame}{MSA: Closer to the Ideal Model}
+    \begin{table}
+        \centering
+        \begin{adjustbox}{width=\textwidth}
+        \begin{tabular}{l|c|ccccc|c|c}
+            \toprule
+            Model & Target & NPO & GradDiff & Task Vec. & SatImp & RMU & MSA & Ideal \\
+            \midrule
+            Llama-3.1-8B & 44.31 & 48.45 & 26.08 & 44.50 & 49.19 & 41.47 & \textbf{63.95} & 64.80 \\
+            OLMo-2-7B & 37.60 & 34.73 & 21.28 & 38.47 & 40.25 & 36.00 & \textbf{47.80} & 49.76 \\
+            \bottomrule
+        \end{tabular}
+        \end{adjustbox}
+        \caption{\footnotesize Accuracy (\%) on the RESTOR benchmark. ``Target'' = before unlearning; ``Ideal'' = never trained on $\mathcal{D}_\text{f}$.}
+    \end{table}
+    MSA is the only method that nearly closes the gap to the Ideal model, on both architectures.
 \end{frame}
 
 \section{Conclusion}
