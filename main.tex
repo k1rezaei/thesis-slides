@@ -127,7 +127,7 @@
 
 \begin{frame}{Research Theme}
     \centering
-    \uncover<1->{Aside from retrieval at inference time and tool calling,
+    \uncover<1->{Aside from retrieval at inference time and tool calling,\\
         all of a model's knowledge is stored in its
         \textcolor{themecolor}{\textbf{parameters}}.}
 
@@ -147,8 +147,7 @@
         \uncover<4->{%
             \vspace{0.1em}
             \centering
-            {\color{themecolor}\large$\downarrow$}\\[0.15em]
-            \small\textbf{Efficient, surgical model editing}\par
+            {\color{themecolor}\large$\downarrow$}\par
         }
 
         \column{0.47\textwidth}
@@ -161,12 +160,19 @@
         \uncover<4->{%
             \vspace{0.1em}
             \centering
-            {\color{themecolor}\large$\downarrow$}\\[0.15em]
-            \small\textbf{Data attribution}\\
-            \small\textbf{Dataset selection}\\
-            \small\textbf{Machine unlearning}\par
+            {\color{themecolor}\large$\downarrow$}\par
         }
     \end{columns}
+
+    \uncover<4->{%
+        \vspace{0.2em}
+        At test time we can control behavior directly
+        (\textcolor{themecolor}{\textbf{model editing}},
+        \textcolor{themecolor}{\textbf{machine unlearning}}),\\
+        or shape it before deployment
+        (\textcolor{themecolor}{\textbf{dataset selection}},
+        \textcolor{themecolor}{\textbf{alignment}}).
+    }
 \end{frame}
 
 \section{Localize}
