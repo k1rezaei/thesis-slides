@@ -788,51 +788,65 @@
 \begin{frame}{Localizing by Attention Contribution}
     \centering
     How hard does text token $\mathbf{x}_j$ \textbf{push} on image token $\mathbf{y}_i$
-    in this block?
+    in \textbf{this block}?
+
+    \begin{minipage}[c][1.45cm][c]{\textwidth}
+        \centering
+        \only<1>{$\displaystyle
+                \text{cont}_{i,j} \;=\; \big\| \text{attn}_{i,j}\; \mathbf{v}_j\, W_o \big\|_2 $}%
+        \only<2->{$\displaystyle
+                \text{cont}_{i,j} \;=\; \Big\| \sum_{h=1}^{H} \text{attn}^h_{i,j}\;
+                \mathbf{v}^h_j\, W^h_o \Big\|_2 $}
+    \end{minipage}
+
     \vspace{-0.3em}
-    \[
-        \text{cont}_{i,j} \;=\; \Big\| \sum_{h=1}^{H} \text{attn}^h_{i,j}\;
-        \mathbf{v}^h_j\, W^h_o \Big\|_2
-    \]
-    \vspace{-1.0em}
-    \uncover<2->{%
-        \begin{itemize}\small
-            \item Average over image tokens, prompts and seeds
-                  $\Rightarrow$ one score per block.
-            \item Keep the \textcolor{themecolor}{\textbf{top-$K$ blocks}}
-                  $\mathcal{B}^\kappa_K$ for the knowledge $\kappa$.
-        \end{itemize}}
-    \vspace{0.2em}
-    \uncover<3->{%
-        \begin{tcolorbox}[colback=xattn!5,colframe=xattn,arc=1.5mm,boxrule=0.8pt,
-                width=0.92\textwidth,left=6pt,right=6pt,top=4pt,bottom=4pt]
-            \small \textbf{No search at all.} One forward pass gives the ranking,
-            and it is \textbf{model-} and \textbf{knowledge-agnostic}.
-        \end{tcolorbox}}
+    \uncover<2->{\small Attention runs $H$ heads in parallel, so add their writes first.}
+
+    \vspace{0.3em}
+    \begin{columns}[c,onlytextwidth]
+        \column{0.64\textwidth}
+        \uncover<3->{\small
+            Summing over image tokens $i$ gives how much $\mathbf{x}_j$ writes into the
+            \textbf{whole image} at this layer.}
+
+        \vspace{0.5em}
+        \uncover<4->{\small
+            For a meaningful $\mathbf{x}_j$ (an artist, an object, a character),
+            rank the layers by that score and keep the
+            \textcolor{themecolor}{\textbf{top contributors}}.}
+
+        \column{0.32\textwidth}
+        \uncover<4->{\includegraphics[width=\linewidth]{Figures/dit/attribution-ranking.jpg}}
+    \end{columns}
+
+    \vspace{0.3em}
+    {\tiny\color{gray!50!black} Zarei, Basu, \textbf{Rezaei}, et al.
+        \textit{Localizing Knowledge in Diffusion Transformers}. NeurIPS 2025.}
 \end{frame}
 
 \begin{frame}{$\mathcal{L}$oc$\mathcal{K}$: Probing Six Kinds of Knowledge}
     \centering
     \small Every prompt comes with a \textbf{knowledge-agnostic twin}:
-    \vspace{0.4em}
+    \vspace{0.5em}
 
-    \begin{tabular}{r@{\ \ }l}
-        $p^\kappa$                 & \textit{``the Batman walking through a desert''}   \\[0.2em]
-        $p^{\kappa\text{-neutral}}$ & \textit{``a character walking through a desert''} \\
+    \begin{tabular}{r@{\ \ }c@{\ \ }l}
+        \textit{``the Batman walking through a desert''} &
+        {\color{themecolor}$\longrightarrow$} &
+        \textit{``a character walking through a desert''} \\
     \end{tabular}
 
-    \vspace{0.8em}
+    \vspace{0.9em}
     \small Categories: \textbf{artistic styles}, \textbf{celebrities},
     \textbf{safety content}, \textbf{copyrighted characters},
     \textbf{landmarks}, \textbf{animals}.
 
-    \vspace{0.9em}
+    \vspace{1.0em}
     \uncover<2->{%
         \begin{tcolorbox}[colback=themecolor!5,colframe=themecolor,arc=1.5mm,boxrule=0.8pt,
                 width=0.92\textwidth,left=6pt,right=6pt,top=4pt,bottom=4pt]
-            \small \textbf{The test:} feed $p^\kappa$ everywhere, but hand the top-$K$
-            blocks $p^{\kappa\text{-neutral}}$ instead. If the concept vanishes,
-            those blocks were carrying it.
+            \small \textbf{The test:} run the original prompt everywhere, but hand the
+            \textbf{localized cross-attention layers} the twin instead.
+            If the concept vanishes, those layers were carrying it.
         \end{tcolorbox}}
 \end{frame}
 
@@ -856,11 +870,12 @@
 
 \begin{frame}{Even Two Artists Need Different Blocks}
     \centering
-    \includegraphics[height=0.72\textheight]{Figures/dit/style-blocks.jpg}
+    \includegraphics[height=0.68\textheight]{Figures/dit/style-blocks.jpg}
 
     \vspace{0.2em}
-    {\small Picasso needs $K=8$ blocks, Caulfield $K=4$;
-    \textcolor{themecolor}{\textbf{Van Gogh $K=12$}}, Monet $K=10$.}
+    {\small In PixArt-$\alpha$ (\textbf{28 blocks}): Picasso needs $K=8$,
+    Caulfield $K=4$; \textcolor{themecolor}{\textbf{Van Gogh $K=12$}}, Monet $K=10$.\\[0.2em]
+    Just $K=4$ already pins down the style of $\sim$80\% of the artists.}
 \end{frame}
 
 \section{Unlearn}
