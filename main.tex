@@ -180,7 +180,7 @@
     \roadmap{2}
 \end{frame}
 
-\begin{frame}{Inside a U-Net Diffusion Model}
+\begin{frame}{Inside a U-Net Diffusion Model: Stable Diffusion 2 (2022)}
     \centering
     \begin{tikzpicture}[
             font=\scriptsize,
@@ -191,8 +191,12 @@
             ar/.style={->,>=stealth,themecolor,semithick},
             car/.style={->,>=stealth,xattn,thin},
             skip/.style={->,>=stealth,gray!45,dashed,thin},
+            sub/.style={draw=themecolor,fill=themecolor!10,thick,rounded corners=1.5pt,
+                    minimum width=1.5cm,minimum height=0.5cm,inner sep=1pt,font=\scriptsize},
+            subx/.style={draw=xattn,fill=xattn!20,thick,rounded corners=1.5pt,
+                    minimum width=1.5cm,minimum height=0.5cm,inner sep=1pt,font=\scriptsize},
         ]
-        \path[use as bounding box] (-1.2,-3.15) rectangle (12.7,2.55);
+        \path[use as bounding box] (-1.2,-3.6) rectangle (12.7,2.55);
 
         % encoder / bottleneck / decoder
         \foreach \n/\x/\h in {D1/0/1.35, D2/1.2/1.05, D3/2.4/0.8, M/3.6/0.6,
@@ -223,20 +227,26 @@
                 \draw[car,visible on=<2->] (txt.south -| ca\n) -- (ca\n.north);
             }
 
-        % zoom on one cross-attention layer
-        \node[visible on=<3->,draw=xattn,thick,rounded corners=1pt,
-            minimum width=0.78cm,minimum height=0.32cm,inner sep=0pt] (sel) at (3.6,0.56) {};
-        \node[visible on=<3->,draw=xattn,fill=xattn!6,thick,rounded corners=2pt,
-            text width=6cm,align=left,inner sep=5pt] (zoom) at (3.2,-2.3)
-        {\textbf{\textcolor{xattn}{Cross-attention}}\\
-            $Q$ from the image latent, $K,V$ from the text $c$\\
-            \textcolor{xattn}{the only path text takes into the model}};
+        % magnify one block: what a block is made of
+        \node[visible on=<3->,draw=xattn,thick,rounded corners=1.5pt,
+            minimum width=0.86cm,minimum height=0.78cm,inner sep=0pt] (sel) at (3.6,0.35) {};
+        \node[visible on=<3->,draw=xattn,fill=white,thick,rounded corners=2pt,
+            minimum width=6.6cm,minimum height=1.95cm,inner sep=0pt] (zoom) at (3.2,-2.5) {};
         \draw[xattn,dashed,thin,visible on=<3->] (sel.south west) -- (zoom.north west);
         \draw[xattn,dashed,thin,visible on=<3->] (sel.south east) -- (zoom.north east);
+        \node[sub,visible on=<3->]  (r1) at (1.3,-2.08) {ResNet};
+        \node[sub,visible on=<3->]  (r2) at (3.2,-2.08) {Self-Attn};
+        \node[subx,visible on=<3->] (r3) at (5.1,-2.08) {Cross-Attn};
+        \draw[ar,visible on=<3->] (r1) -- (r2);
+        \draw[ar,visible on=<3->] (r2) -- (r3);
+        \node[visible on=<3->,font=\scriptsize,align=center] at (3.2,-2.95)
+        {\textcolor{xattn}{text enters only here}\\[0.1em]
+            $Q$ from the latent, $K,V$ from the text $c$};
 
         % the questions
-        \node[visible on=<4->,text width=5cm,align=left,font=\small] at (10.15,-1.95)
-        {\textcolor{gray!45!black}{\scriptsize$\sim$865M parameters, dozens of layers.}\\[0.6em]
+        \node[visible on=<4->,text width=5.4cm,align=left,font=\small] at (9.95,-1.95)
+        {\textcolor{gray!45!black}{\scriptsize$\sim$1B parameters,\\
+            \scriptsize 16 cross-attention layers.}\\[0.6em]
             Where in the model is\\[0.2em]
             the knowledge of \textcolor{themecolor}{\textbf{house}}?\\[0.15em]
             the knowledge of \textcolor{themecolor}{\textbf{Van Gogh}}?};
