@@ -69,56 +69,60 @@
     \end{center}
 \end{frame}
 
-\begin{frame}{Two Recipes for Generation}
-    \begin{columns}[T,onlytextwidth]
-        \column{0.49\textwidth}
-        \begin{center}
-            \textbf{\color{themecolor}Text-to-Image: Diffusion}
-        \end{center}
-        \vspace{-0.4em}
-        \begin{center}
-            \raisebox{-0.5\height}{\includegraphics[width=0.205\linewidth]{Figures/genai/diffusion/x3.png}}%
-            {\color{themecolor}$\rightarrow$}%
-            \raisebox{-0.5\height}{\includegraphics[width=0.205\linewidth]{Figures/genai/diffusion/x2.png}}%
-            {\color{themecolor}$\rightarrow$}%
-            \raisebox{-0.5\height}{\includegraphics[width=0.205\linewidth]{Figures/genai/diffusion/x1.png}}%
-            {\color{themecolor}$\rightarrow$}%
-            \raisebox{-0.5\height}{\includegraphics[width=0.205\linewidth]{Figures/genai/diffusion/x0.png}}
-        \end{center}
-        \vspace{-0.6em}
-        {\centering\scriptsize\color{gray!50!black}
-            \textit{``an astronaut riding a horse in space''}\\[-0.1em]
-            {\tiny Stable Diffusion 3.5 sample, public domain (Wikimedia Commons)}\par}
-        \vspace{0.4em}
-        \begin{itemize}\footnotesize
-            \item \textbf{Train:} corrupt an image with Gaussian noise, learn to predict the noise.
-            \item \textbf{Sample:} start from pure noise and denoise iteratively, conditioned on the prompt.
-            \item \textbf{Architecture:} \textbf{U-Net} (SD 1/2, SDXL) $\rightarrow$ \textbf{Transformer} (SD 3, FLUX).
-        \end{itemize}
+\begin{frame}{Text-to-Image: Diffusion}
+    \begin{center}
+        \begin{tabular}{@{}c@{\;}c@{\;}c@{\;}c@{\;}c@{\;}c@{\;}c@{}}
+            \dstep{x3}     & {\color{themecolor}$\longrightarrow$} &
+            \dstep{x2}     & {\color{themecolor}$\longrightarrow$} &
+            \dstep{x1}     & {\color{themecolor}$\longrightarrow$} &
+            \dstep{x0}                                                 \\[0.15em]
+            $x_T$ (noise)  &                                       &
+                           &                                       &
+                           &                                       &
+            $x_0 = x$                                                  \\
+        \end{tabular}
+    \end{center}
+    \vspace{-0.6em}
+    \begin{center}
+        {\scriptsize\color{gray!50!black}\textit{``an astronaut riding a horse in space''} $= c$}
+    \end{center}
+    \vspace{-0.2em}
+    \begin{center}
+        \textbf{Train:}\quad
+        $\displaystyle \mathcal{L}(\theta) = \mathbb{E}_{t,\varepsilon} \big\| \varepsilon - \varepsilon_\theta(x_t, t, c) \big\|^2$
+        \hspace{2.5em}
+        \textbf{Architecture:}\quad U-Net $\longrightarrow$ Transformer
+    \end{center}
+    \vspace{-0.2em}
+    \begin{center}
+        {\small image $x$, prompt $c$, noise $\varepsilon \sim \mathcal{N}(0,I)$,
+            noisy image $x_t = \sqrt{\bar\alpha_t}\, x + \sqrt{1-\bar\alpha_t}\, \varepsilon$}
+    \end{center}
+\end{frame}
 
-        \column{0.49\textwidth}
-        \begin{center}
-            \textbf{\color{themecolor}LLMs: Next-Token Prediction}
-        \end{center}
-        \vspace{-0.4em}
-        \begin{center}
-            \begin{tikzpicture}[x=1mm,y=1mm]
-                \node[anchor=west,font=\scriptsize] at (0,20)
-                {\texttt{The capital of France is} \rule[-0.3ex]{1.1em}{0.7pt}};
-                \foreach \tok/\p/\y in {Paris/0.92/13, Lyon/0.03/8, the/0.02/3, a/0.01/-2} {
-                        \node[anchor=east,font=\scriptsize\ttfamily] at (13,\y) {\tok};
-                        \fill[themecolor] (14,\y-1.5) rectangle ({14+\p*26},\y+1.5);
-                        \node[anchor=west,font=\scriptsize,color=gray!50!black] at ({14+\p*26+1},\y) {\p};
-                    }
-            \end{tikzpicture}
-        \end{center}
-        \vspace{-0.5em}
-        \begin{itemize}\footnotesize
-            \item \textbf{Train:} maximize $\sum_t \log p_\theta(x_t \mid x_{<t})$ over web-scale text.
-            \item \textbf{Sample:} decode autoregressively, one token at a time.
-            \item \textbf{Architecture:} \textbf{Transformer} decoder with causal self-attention.
-        \end{itemize}
-    \end{columns}
+\begin{frame}{Large Language Models: Next-Token Prediction}
+    \begin{center}
+        \begin{tikzpicture}[x=1.6mm,y=1.6mm]
+            \node[anchor=west,font=\small] at (0,22)
+            {\texttt{The capital of France is} \rule[-0.3ex]{1.2em}{0.7pt}};
+            \foreach \tok/\p/\y in {Paris/0.92/14, Lyon/0.03/9, the/0.02/4, a/0.01/-1} {
+                    \node[anchor=east,font=\small\ttfamily] at (13,\y) {\tok};
+                    \fill[themecolor] (14,\y-1.5) rectangle ({14+\p*26},\y+1.5);
+                    \node[anchor=west,font=\small,color=gray!50!black] at ({14+\p*26+1},\y) {\p};
+                }
+        \end{tikzpicture}
+    \end{center}
+    \vspace{-0.6em}
+    \begin{center}
+        \textbf{Train:}\quad
+        $\displaystyle \mathcal{L}(\theta) = -\sum_{t=1}^{T} \log p_\theta\big(x_t \mid x_1, \dots, x_{t-1}\big)$
+        \hspace{2.5em}
+        \textbf{Architecture:}\quad Transformer
+    \end{center}
+    \vspace{-0.2em}
+    \begin{center}
+        {\small tokens $x_1, x_2, \dots, x_T$ of a training sequence}
+    \end{center}
 \end{frame}
 
 \begin{frame}{Research Theme}
