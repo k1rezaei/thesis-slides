@@ -598,9 +598,8 @@
 
     \vspace{1.0em}
     \uncover<2->{%
-        The same solve \textbf{removes a style}, \textbf{swaps a trademarked object},
-        or \textbf{updates an outdated fact} --- and it is
-        \textcolor{themecolor}{\textbf{permanent}}, not a per-prompt trick.}
+        One solve --- \textcolor{themecolor}{\textbf{permanently}} edit a
+        \textbf{style}, a \textbf{trademarked object}, or an \textbf{outdated fact}.}
 \end{frame}
 
 \begin{frame}{\textsc{LocoEdit}: Edits Across Models and Attributes}
@@ -610,9 +609,7 @@
 
 \begin{frame}{The Edit Leaves Everything Else Alone}
     \centering
-    \small 320 generic prompts from MS-COCO --- 80 objects $\times$ 4 locations
-    (\textit{beach}, \textit{forest}, \textit{city}, \textit{house}) --- none of them
-    about the edited attribute.
+    \small 320 prompts from MS-COCO, unrelated to the edit.
 
     \vspace{0.6em}
     \begin{table}
@@ -620,9 +617,9 @@
         \renewcommand{\arraystretch}{1.25}
         \begin{tabular}{l|c|c}
             \toprule
-            Editing method            & style-edited model & object-edited model \\
+            Model                     & style-edited model & object-edited model \\
             \midrule
-            no editing                & 30.04              & 30.04               \\
+            SD-v1.5                   & 30.04              & 30.04               \\
             \textsc{LocoEdit}         & \textbf{29.99}     & \textbf{29.40}      \\
             \bottomrule
         \end{tabular}
