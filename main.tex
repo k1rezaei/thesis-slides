@@ -717,6 +717,74 @@
     the prompt enters every block through \textcolor{xattn}{\textbf{cross-attention}}.}
 \end{frame}
 
+\begin{frame}{What Cross-Attention Writes}
+    \centering
+    \begin{tikzpicture}[
+            font=\scriptsize,
+            tok/.style={draw=xattn,fill=xattn!10,thick,rounded corners=1.5pt,
+                    minimum width=1.3cm,minimum height=0.5cm,inner sep=1pt},
+            wm/.style={draw=themecolor,fill=white,thick,rounded corners=2pt,
+                    minimum width=0.85cm,minimum height=0.5cm,inner sep=1pt},
+            ar/.style={->,>=stealth,themecolor,semithick},
+            arx/.style={->,>=stealth,xattn,semithick},
+            patch/.style={draw=themecolor,fill=themecolor!12,thin},
+        ]
+        \path[use as bounding box] (-2.6,-2.3) rectangle (12.4,3.3);
+
+        % ---- text tokens, keys and values
+        \foreach \w/\x/\j in {A/5.0/1, house/6.6/2, Van/8.2/3, Gogh/9.8/4} {
+                \node[tok] (t\j) at (\x,2.85) {\textit{\w}};
+                \node[font=\tiny,xattn] at (\x,2.32) {$(\mathbf{k}_\j,\mathbf{v}_\j)$};
+            }
+        \node[font=\tiny,gray!50!black] at (3.7,2.85) {text tokens};
+
+        % ---- attention weights: every token contributes, some far more
+        \foreach \x/\h/\p in {5.0/0.12/0.04, 6.6/0.30/0.11, 8.2/0.82/0.38, 9.8/1.00/0.47} {
+                \fill[xattn] ({\x-0.16},{2.00-\h}) rectangle ({\x+0.16},2.00);
+                \node[font=\tiny,gray!45!black] at ({\x+0.42},{2.00-\h+0.10}) {\p};
+                \draw[arx] (\x,{2.00-\h-0.06}) -- (\x,0.52);
+            }
+        \node[font=\tiny,gray!50!black,align=center] at (11.4,1.62) {attention\\ weights};
+        \draw[xattn,semithick] (5.0,0.5) -- (9.8,0.5);
+
+        % ---- the query side
+        \foreach \r in {0,1,2}{\foreach \c in {0,1,2}{
+                    \node[patch,minimum width=0.32cm,minimum height=0.32cm,inner sep=0pt]
+                    at ({-2.16+0.33*\c},{-0.95-0.33*\r}) {};
+                }}
+        \node[draw=xattn,fill=xattn!45,thin,minimum width=0.32cm,minimum height=0.32cm,inner sep=0pt]
+        at (-1.83,-1.28) {};
+        \node[font=\tiny,gray!50!black] at (-1.83,-1.92) {image patches};
+
+        \draw[ar] (-1.32,-1.28) -- (0.05,-1.28);
+        \node[font=\tiny] at (0.4,-1.02) {$\mathbf{y}_i$};
+        \draw[ar] (0.05,-1.28) -- (12.0,-1.28);
+        \node[font=\tiny,gray!50!black] at (11.2,-1.62) {to the next block};
+
+        \node[wm] (wq) at (1.9,-0.42) {$W_q$};
+        \draw[ar] (1.9,-1.28) -- (wq);
+        \node[font=\tiny] (qi) at (1.9,0.32) {$\mathbf{q}_i$};
+        \draw[ar] (wq) -- (qi);
+        \draw[ar] (qi) to[out=72,in=186] (4.25,2.6);
+        \node[font=\tiny,align=center,gray!45!black] at (3.5,0.85)
+        {$\operatorname{softmax}_j\dfrac{\langle \mathbf{q}_i,\mathbf{k}_j\rangle}{\sqrt{d}}$};
+
+        % ---- what gets written back into the stream
+        \draw[arx,very thick] (7.4,0.5) -- (7.4,0.12);
+        \node[draw=xattn,fill=xattn!10,very thick,rounded corners=2pt,inner sep=4pt] (sum) at (7.4,-0.36)
+        {$\displaystyle\sum_{j}\ \text{attn}_{i,j}\ \mathbf{v}_j\, W_o$};
+        \node[draw=xattn,fill=xattn,text=white,circle,inner sep=1pt,font=\small] (plus) at (7.4,-1.28) {$+$};
+        \draw[arx,very thick] (sum) -- (plus);
+        \node[font=\tiny,xattn,align=left] at (9.85,-0.72)
+        {\textbf{cross-attention}\\ \textbf{writes here}};
+        \draw[xattn,thin,->,>=stealth] (9.05,-0.95) -- (7.78,-1.22);
+    \end{tikzpicture}
+
+    \vspace{-0.2em}
+    {\small Every text token contributes to \textit{every} image token, but
+    \textcolor{xattn}{\textbf{some far more than others}}.}
+\end{frame}
+
 \begin{frame}{Localizing by Attention Contribution}
     \centering
     How hard does text token $\mathbf{x}_j$ \textbf{push} on image token $\mathbf{y}_i$
