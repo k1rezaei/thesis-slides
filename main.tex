@@ -824,30 +824,51 @@
         \textit{Localizing Knowledge in Diffusion Transformers}. NeurIPS 2025.}
 \end{frame}
 
-\begin{frame}{$\mathcal{L}$oc$\mathcal{K}$: Probing Six Kinds of Knowledge}
+\begin{frame}{Does It Work?}
     \centering
-    \small Every prompt comes with a \textbf{knowledge-agnostic twin}:
-    \vspace{0.5em}
+    \begin{tikzpicture}[
+            font=\scriptsize,
+            blk/.style={draw=themecolor,fill=themecolor!12,thick,rounded corners=1.5pt,
+                    minimum width=0.85cm,minimum height=1.8cm,inner sep=0pt},
+            blkS/.style={draw=xattn,fill=xattn!22,very thick,rounded corners=1.5pt,
+                    minimum width=0.85cm,minimum height=1.8cm,inner sep=0pt},
+            ar/.style={->,>=stealth,themecolor!60,semithick},
+            arx/.style={->,>=stealth,xattn,semithick},
+        ]
+        \path[use as bounding box] (-1.5,-2.9) rectangle (12.4,2.5);
 
-    \begin{tabular}{r@{\ \ }c@{\ \ }l}
-        \textit{``the Batman walking through a desert''} &
-        {\color{themecolor}$\longrightarrow$} &
-        \textit{``a character walking through a desert''} \\
-    \end{tabular}
+        \node[draw=themecolor,fill=themecolor!8,thick,rounded corners=1.5pt,
+            minimum width=7.7cm,minimum height=0.46cm] (top) at (3.25,1.85)
+        {\textit{``The Batman inside a snow globe''}};
 
-    \vspace{0.9em}
-    \small Categories: \textbf{artistic styles}, \textbf{celebrities},
-    \textbf{safety content}, \textbf{copyrighted characters},
-    \textbf{landmarks}, \textbf{animals}.
+        \foreach \x/\n in {0/1, 1.3/2, 5.2/5, 6.5/6} {
+                \node[blk] (b\n) at (\x,0) {};
+                \draw[ar] (top.south -| b\n) -- (b\n.north);
+            }
+        \foreach \x/\n in {2.6/3, 3.9/4} {\node[blkS] (b\n) at (\x,0) {};}
+        \node[font=\tiny,gray!50!black] at (-1.0,0) {$x_t$};
+        \draw[->,>=stealth,themecolor,semithick] (-0.75,0) -- (b1);
+        \draw[->,>=stealth,themecolor,semithick] (b6.east) -- (7.4,0);
+        \node[font=\tiny,xattn,align=center] at (3.25,1.05) {\textbf{localized blocks}};
 
-    \vspace{1.0em}
-    \uncover<2->{%
-        \begin{tcolorbox}[colback=themecolor!5,colframe=themecolor,arc=1.5mm,boxrule=0.8pt,
-                width=0.92\textwidth,left=6pt,right=6pt,top=4pt,bottom=4pt]
-            \small \textbf{The test:} run the original prompt everywhere, but hand the
-            \textbf{localized cross-attention layers} the twin instead.
-            If the concept vanishes, those layers were carrying it.
-        \end{tcolorbox}}
+        \node[draw=xattn,fill=xattn!8,thick,rounded corners=1.5pt,
+            minimum width=5.0cm,minimum height=0.46cm] (bot) at (3.25,-2.1)
+        {\textit{``a character inside a snow globe''}};
+        \foreach \n in {3,4} {\draw[arx] (bot.north -| b\n) -- (b\n.south);}
+
+        \node[inner sep=0pt,draw=themecolor,line width=0.7pt] (o1) at (9.2,0.25)
+        {\includegraphics[width=2.0cm]{Figures/dit/batman-orig.jpg}};
+        \node[inner sep=0pt,draw=xattn,line width=0.7pt] (o2) at (11.4,0.25)
+        {\includegraphics[width=2.0cm]{Figures/dit/batman-int.jpg}};
+        \node[font=\tiny,align=center,text width=2.2cm] at (9.2,-1.3)
+        {every block gets\\ the prompt};
+        \node[font=\tiny,align=center,text width=2.2cm,xattn] at (11.4,-1.3)
+        {\textbf{Batman is gone}};
+    \end{tikzpicture}
+
+    \vspace{-0.2em}
+    {\small Hand the localized blocks a \textbf{knowledge-agnostic twin} of the prompt.
+    If the concept vanishes, those blocks were carrying it.}
 \end{frame}
 
 \begin{frame}{Where Knowledge Lives, Model by Model}
@@ -869,13 +890,76 @@
 \end{frame}
 
 \begin{frame}{Even Two Artists Need Different Blocks}
-    \centering
-    \includegraphics[height=0.68\textheight]{Figures/dit/style-blocks.jpg}
+    \begin{columns}[c,onlytextwidth]
+        \column{0.33\textwidth}
+        \small In PixArt-$\alpha$, out of \textbf{28 blocks}:
+        \vspace{0.5em}
 
-    \vspace{0.2em}
-    {\small In PixArt-$\alpha$ (\textbf{28 blocks}): Picasso needs $K=8$,
-    Caulfield $K=4$; \textcolor{themecolor}{\textbf{Van Gogh $K=12$}}, Monet $K=10$.\\[0.2em]
-    Just $K=4$ already pins down the style of $\sim$80\% of the artists.}
+        \begin{tabular}{@{}l@{\ \ }r@{}}
+            Caulfield                                    & $K=4$  \\
+            Picasso                                      & $K=8$  \\
+            Monet                                        & $K=10$ \\
+            \textcolor{themecolor}{\textbf{Van Gogh}}    & \textcolor{themecolor}{\textbf{$K=12$}} \\
+        \end{tabular}
+
+        \vspace{0.9em}
+        \small Just $K=4$ already pins down the style of $\sim$80\% of the artists.
+
+        \column{0.63\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{Figures/dit/style-blocks.jpg}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Fine-Tune Only the Blocks That Matter}
+    \centering
+    \small Localize first, then update \textbf{every parameter of the selected blocks
+        and nothing else}. Both on PixArt-$\alpha$ (28 blocks).
+    \vspace{0.7em}
+
+    \begin{columns}[T,onlytextwidth]
+        \column{0.47\textwidth}
+        \begin{tcolorbox}[colback=themecolor!5,colframe=themecolor,arc=1.5mm,boxrule=0.8pt,
+                fonttitle=\bfseries\small,coltitle=white,colbacktitle=themecolor,
+                title=Personalization (DreamBooth)]
+            \small Infer the subject's class (a \textit{dog}), localize that class,
+            and fine-tune \textcolor{themecolor}{\textbf{9 of 28 blocks}}.
+        \end{tcolorbox}
+
+        \column{0.47\textwidth}
+        \begin{tcolorbox}[colback=xattn!5,colframe=xattn,arc=1.5mm,boxrule=0.8pt,
+                fonttitle=\bfseries\small,coltitle=white,colbacktitle=xattn,
+                title=Unlearning (concept ablation)]
+            \small Pull the target (\textit{Van Gogh}) onto an anchor (\textit{a painting})
+            by fine-tuning \textcolor{xattn}{\textbf{5 of 28 blocks}}.
+        \end{tcolorbox}
+    \end{columns}
+
+    \vspace{0.9em}
+    \uncover<2->{%
+        \small The baseline updates \textbf{all} of them.
+        Localized is \textcolor{themecolor}{\textbf{15--20\% faster}} and uses
+        \textcolor{themecolor}{\textbf{$\sim$30\% less memory}}.}
+\end{frame}
+
+\begin{frame}{Personalization: Better on Every Metric}
+    \centering
+    \includegraphics[width=\textwidth]{Figures/dit/dreambooth-quant.jpg}
+
+    \vspace{0.6em}
+    {\small Localized DreamBooth follows the prompt better, keeps
+    \textbf{surrounding identities} (Husky, Golden Retriever) intact,
+    and holds its FID as training runs on.}
+\end{frame}
+
+\begin{frame}{Unlearning: Same Erasure, Less Collateral}
+    \centering
+    \includegraphics[width=0.88\textwidth]{Figures/dit/unlearning-quant.jpg}
+
+    \vspace{0.6em}
+    {\small The target style drops just as fast, but
+    \textbf{surrounding} artists and the \textbf{anchor} survive,
+    and FID degrades far less than with full fine-tuning.}
 \end{frame}
 
 \section{Unlearn}
