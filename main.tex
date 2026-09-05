@@ -308,7 +308,7 @@
     \end{tikzpicture}
 \end{frame}
 
-\begin{frame}{\textsc{LocoGen} (ICML 2024): Give a Subset a Different Prompt}
+\begin{frame}{\textsc{LocoGen}: Give a Subset a Different Prompt}
     \centering
     \begin{tikzpicture}[
             font=\scriptsize,
@@ -366,8 +366,131 @@
     \end{tikzpicture}
 
     \vspace{-0.3em}
-    {\scriptsize\color{gray!50!black} Basu, \textbf{Rezaei}, et al.
+    {\tiny\color{gray!50!black} Basu, \textbf{Rezaei}, et al.
         \textit{On Mechanistic Knowledge Localization in Text-to-Image Generative Models}. ICML 2024.}
+\end{frame}
+
+
+\begin{frame}{\textsc{LocoGen}: Searching for the Controlling Layers}
+    \centering
+    \uncover<1->{%
+        Which $m$ of the $M$ cross-attention layers should get $c'$?
+        \textbf{Brute force} tries all $\binom{M}{m}$ subsets ---
+        for SD-XL ($M=70$, $m=5$) that is over \textcolor{xattn}{\textbf{12 million}}.}
+
+    \vspace{0.5em}
+    \uncover<2->{%
+        Restricting the search to \textcolor{themecolor}{\textbf{adjacent}} layers
+        leaves only $M-m+1$ windows --- \textcolor{themecolor}{\textbf{66}} for SD-XL.}
+
+    \vspace{0.7em}
+    \uncover<3->{%
+        \begin{tcolorbox}[colback=themecolor!4,colframe=themecolor,arc=1.5mm,boxrule=0.8pt,
+                width=0.92\textwidth,left=6pt,right=6pt,top=4pt,bottom=4pt,
+                fonttitle=\bfseries\small,title=\textsc{LocoGen}]
+            \small
+            \textbf{for} $j = 1, \dots, M-m+1$:\\
+            \hspace*{1.3em}$C' \gets \{C_j, \dots, C_{j+m-1}\}$
+            \hfill{\scriptsize\color{gray!45!black} a window of $m$ adjacent layers}\\
+            \hspace*{1.3em}generate $N$ images: layers in $C'$ receive $c'_i$, all others receive $c_i$\\
+            \hspace*{1.3em}$a_j \gets \operatorname{avg}_i \textsc{CLIP-Score}(T_i, I_\text{altered})$\\
+            \textbf{return} $\arg\min_j a_j$
+            \hfill{\scriptsize\color{gray!45!black} style, objects\quad($\arg\max$ for facts)}
+        \end{tcolorbox}}
+
+    \vspace{0.2em}
+    \uncover<4->{\small
+        $m$ itself is swept upward: the \textbf{smallest} window that removes the attribute.}
+\end{frame}
+
+\begin{frame}{How Few Layers Are Enough?}
+    \centering
+    \begin{table}
+        \small
+        \renewcommand{\arraystretch}{1.25}
+        \begin{tabular}{l|c|c|c}
+            \toprule
+            Model               & cross-attention layers $M$ & window $m$ & fraction        \\
+            \midrule
+            Stable Diffusion v1-5 & 16                       & 2          & \textbf{13\%}   \\
+            Stable Diffusion v2-1 & 16                       & 3          & \textbf{19\%}   \\
+            OpenJourney           & 16                       & 2          & \textbf{13\%}   \\
+            SD-XL                 & 70                       & 5          & \textbf{7\%}    \\
+            DeepFloyd             & 22                       & 3          & \textbf{14\%}   \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
+    \vspace{0.3em}
+    Across every model, a \textcolor{themecolor}{\textbf{handful of adjacent layers}}
+    --- never more than a fifth of them --- controls a visual attribute.
+\end{frame}
+
+\begin{frame}{The Same Recipe for Style, Objects and Facts}
+    \centering
+    \includegraphics[width=\textwidth]{Figures/localize/attributes-row.jpg}
+
+    \vspace{0.4em}
+    \uncover<2->{%
+        \small For SD variants, OpenJourney and SD-XL the location depends on the
+        \textcolor{themecolor}{\textbf{attribute}}, not the prompt:\\
+        \textit{Van Gogh} and \textit{Monet} are both controlled from layer 8.}
+
+    \vspace{0.3em}
+    \uncover<3->{%
+        \small DeepFloyd is the exception --- there it is
+        \textcolor{xattn}{\textbf{prompt-specific}}:\\
+        \textit{Van Gogh} from layer 12, \textit{Monet} from layer 16.}
+\end{frame}
+
+\begin{frame}{Inside Cross-Attention}
+    \centering
+    \begin{tikzpicture}[
+            font=\scriptsize,
+            src/.style={draw=themecolor,fill=themecolor!10,thick,rounded corners=2pt,
+                    minimum width=2.3cm,minimum height=0.6cm,inner sep=2pt},
+            srcx/.style={draw=xattn,fill=xattn!10,thick,rounded corners=2pt,
+                    minimum width=2.3cm,minimum height=0.6cm,inner sep=2pt},
+            wm/.style={draw=themecolor,fill=white,thick,rounded corners=2pt,
+                    minimum width=1.0cm,minimum height=0.6cm,inner sep=1pt},
+            wmx/.style={draw=xattn,fill=xattn!18,very thick,rounded corners=2pt,
+                    minimum width=1.0cm,minimum height=0.6cm,inner sep=1pt},
+            ar/.style={->,>=stealth,themecolor,semithick},
+            arx/.style={->,>=stealth,xattn,semithick},
+        ]
+        \path[use as bounding box] (-1.6,-2.6) rectangle (12.6,2.3);
+
+        \node[srcx] (c)  at (0,1.35) {text embedding $c$};
+        \node[src]  (z)  at (0,-1.35) {image latent};
+
+        \node[wmx] (wk) at (3.3,1.85)  {$W^K$};
+        \node[wmx] (wv) at (3.3,0.85)  {$W^V$};
+        \node[wm]  (wq) at (3.3,-1.35) {$W^Q$};
+
+        \draw[arx] (c.east) -- ++(0.35,0) |- (wk.west);
+        \draw[arx] (c.east) -- ++(0.35,0) |- (wv.west);
+        \draw[ar]  (z) -- (wq);
+
+        \node (K) at (5.0,1.85)  {$K$};
+        \node (V) at (5.0,0.85)  {$V$};
+        \node (Q) at (5.0,-1.35) {$Q$};
+        \draw[arx] (wk) -- (K);
+        \draw[arx] (wv) -- (V);
+        \draw[ar]  (wq) -- (Q);
+
+        \node[draw=themecolor,fill=themecolor!8,thick,rounded corners=2pt,
+            minimum width=4.4cm,minimum height=1.0cm] (att) at (8.4,0.25)
+        {$\operatorname{softmax}\!\left(\dfrac{QK^{\top}}{\sqrt{d}}\right) V$};
+        \draw[arx] (K) -- ++(0.55,0) |- ([yshift=0.28cm]att.west);
+        \draw[arx] (V) -- ++(0.55,0) |- ([yshift=0cm]att.west);
+        \draw[ar]  (Q) -- ++(0.55,0) |- ([yshift=-0.28cm]att.west);
+        \draw[ar]  (att.east) -- ++(1.6,0)
+        node[above,midway,font=\scriptsize,gray!50!black] {next layer};
+
+        \node[visible on=<2->,align=center,font=\small] at (5.2,-2.25)
+        {Only \textcolor{xattn}{\textbf{$W^K$ and $W^V$}} ever see the text.\\[0.2em]
+            \textcolor{themecolor}{\textbf{\textsc{LocoEdit}}} rewrites them, in closed form,
+            at the located layers.};
+    \end{tikzpicture}
 \end{frame}
 
 \section{Edit}
