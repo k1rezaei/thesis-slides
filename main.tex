@@ -539,7 +539,6 @@
 \begin{frame}{\textsc{LocoEdit}: Rewrite the Located Layers}
     \centering
     \uncover<1->{%
-        The fit is not to a single prompt --- $X_\text{orig}$ and $X_\text{target}$ stack\\
         \textbf{$N$ prompt pairs} drawn from the whole attribute.
         \vspace{0.4em}
         \begin{columns}[T,onlytextwidth]
@@ -569,18 +568,18 @@
     \uncover<2->{%
         \vspace{-0.4em}
         \[
-            \min_{W^K_l}\ \big\| X_\text{orig} W^K_l - X_\text{target} \hat{W}^K_l \big\|_2^2
-            + \lambda_K \big\| W^K_l - \hat{W}^K_l \big\|_2^2
+            \min_{W^K}\ \big\| X_\text{orig} W^K - X_\text{target} \hat{W}^K \big\|_2^2
+            + \lambda_K \big\| W^K - \hat{W}^K \big\|_2^2
         \]}
     \vspace{-0.7em}
     \uncover<3->{%
         \[
-            W^K_l = \big(X_\text{orig}^{\top} X_\text{orig} + \lambda_K I\big)^{-1}
-            \big(X_\text{orig}^{\top} Y_\text{target} + \lambda_K \hat{W}^K_l\big)
+            W^K = \big(X_\text{orig}^{\top} X_\text{orig} + \lambda_K I\big)^{-1}
+            \big(X_\text{orig}^{\top} Y_\text{target} + \lambda_K \hat{W}^K\big)
         \]
         \vspace{-1.1em}
         \begin{center}
-            {\small one linear solve --- no gradients, no fine-tuning; same for $W^V_l$.}
+            {\small one linear solve --- no gradients, no fine-tuning; same for $W^V$.}
         \end{center}}
 \end{frame}
 
