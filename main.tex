@@ -575,7 +575,7 @@
     \uncover<3->{%
         \[
             W^K = \big(C_\text{orig}^{\top} C_\text{orig} + \lambda_K I\big)^{-1}
-            \big(C_\text{orig}^{\top} Y_\text{target} + \lambda_K \hat{W}^K\big)
+            \big(C_\text{orig}^{\top} C_\text{target}\hat{W}^K + \lambda_K \hat{W}^K\big)
         \]
         \vspace{-1.1em}
         \begin{center}
@@ -586,8 +586,8 @@
 \begin{frame}{How Little Gets Touched}
     \centering
     \vspace{0.5em}
-    For SD-v1-5 style, the located window is layers 8--9, each holding
-    $W^K, W^V \in \mathbb{R}^{768 \times 1280}$:
+    SD-v1-5, \textit{style}: layers 8--9, each with
+    $W^K, W^V \in \mathbb{R}^{768 \times 1280}$.
     \vspace{0.8em}
 
     \begin{tabular}{r@{\ }l}
@@ -606,6 +606,35 @@
 \begin{frame}{\textsc{LocoEdit}: Edits Across Models and Attributes}
     \centering
     \includegraphics[height=0.78\textheight]{Figures/localize/locoedit-results.jpg}
+\end{frame}
+
+\begin{frame}{The Edit Leaves Everything Else Alone}
+    \centering
+    \small 320 generic prompts from MS-COCO --- 80 objects $\times$ 4 locations
+    (\textit{beach}, \textit{forest}, \textit{city}, \textit{house}) --- none of them
+    about the edited attribute.
+
+    \vspace{0.6em}
+    \begin{table}
+        \small
+        \renewcommand{\arraystretch}{1.25}
+        \begin{tabular}{l|c|c}
+            \toprule
+            Editing method            & style-edited model & object-edited model \\
+            \midrule
+            no editing                & 30.04              & 30.04               \\
+            DiffQuickFix              & 29.61              & 29.32               \\
+            \textsc{LocoEdit} (ours)  & \textbf{29.99}     & \textbf{29.40}      \\
+            \bottomrule
+        \end{tabular}
+        \caption{\footnotesize CLIP-Score of generations for the generic prompts.}
+    \end{table}
+
+    \vspace{0.2em}
+    \uncover<2->{%
+        The edited model scores essentially what the original does ---
+        and drops \textcolor{themecolor}{\textbf{less}} than the text-encoder edit
+        it is compared against.}
 \end{frame}
 
 \section{Unlearn}
