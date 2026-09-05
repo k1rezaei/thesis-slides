@@ -216,13 +216,13 @@
 
         % the sample
         \node[inner sep=0pt,draw=themecolor,line width=0.7pt] (img) at (10.6,1.0)
-        {\includegraphics[width=2.3cm]{Figures/localize/vangogh-house.jpg}};
+        {\includegraphics[width=2.3cm]{Figures/localize/gen-vangogh.jpg}};
         \draw[ar] (eout) -- node[above,font=\tiny,gray!50!black] {$\times T$} (img);
 
         % text enters only through cross-attention
         \node[visible on=<2->,draw=xattn,fill=xattn!7,thick,rounded corners=1.5pt,
             minimum width=8.6cm,minimum height=0.46cm,inner sep=2pt] (txt) at (3.6,2.15)
-        {\textit{``a house in the style of Van Gogh''} $\;\longrightarrow\;$ text embedding $c$};
+        {\textit{``A house in the style of Van Gogh''} $\;\longrightarrow\;$ text embedding $c$};
         \foreach \n in {D1,D2,D3,M,U3,U2,U1} {
                 \draw[car,visible on=<2->] (txt.south -| ca\n) -- (ca\n.north);
             }
@@ -251,6 +251,123 @@
             the knowledge of \textcolor{themecolor}{\textbf{house}}?\\[0.15em]
             the knowledge of \textcolor{themecolor}{\textbf{Van Gogh}}?};
     \end{tikzpicture}
+\end{frame}
+
+
+\begin{frame}{Are All Layers Equal?}
+    \centering
+    \begin{tikzpicture}[
+            font=\scriptsize,
+            blk/.style={draw=themecolor,fill=themecolor!12,thick,rounded corners=1pt,
+                    minimum width=0.6cm,inner sep=0pt},
+            ca/.style={draw=xattn,fill=xattn,rounded corners=0.4pt,
+                    minimum width=0.6cm,minimum height=0.16cm,inner sep=0pt},
+            ar/.style={->,>=stealth,themecolor,semithick},
+            car/.style={->,>=stealth,xattn,thin},
+        ]
+        \path[use as bounding box] (-1.2,-2.6) rectangle (13.1,3.15);
+
+        % prompt -> text encoder -> embedding
+        \node[align=center,font=\scriptsize\itshape] (pr) at (0.4,2.75)
+        {``A house in the style\\ of Van Gogh''};
+        \node[draw=themecolor,fill=themecolor!8,thick,rounded corners=1.5pt,
+            minimum width=2.2cm,minimum height=0.55cm] (enc) at (4.0,2.75) {CLIP text encoder};
+        \draw[ar] (pr) -- (enc);
+        \node[draw=xattn,fill=xattn!7,thick,rounded corners=1.5pt,
+            minimum width=8.6cm,minimum height=0.46cm] (txt) at (3.6,1.85)
+        {text embedding $c$};
+        \draw[ar] (enc) -- (txt);
+
+        % the U-Net
+        \foreach \n/\x/\h in {D1/0/1.35, D2/1.2/1.05, D3/2.4/0.8, M/3.6/0.6,
+                U3/4.8/0.8, U2/6.0/1.05, U1/7.2/1.35} {
+                \node[blk,minimum height=\h cm] (\n) at (\x,0.1) {};
+                \node[ca] (ca\n) at (\x,{0.1+\h/2-0.09}) {};
+            }
+        \foreach \a/\b in {D1/D2,D2/D3,D3/M,M/U3,U3/U2,U2/U1} {\draw[ar] (\a) -- (\b);}
+        \node (xin)  at (-0.8,0.1) {$x_t$};
+        \node (eout) at (8.0,0.1)  {$\hat\varepsilon$};
+        \draw[ar] (xin) -- (D1);
+        \draw[ar] (U1) -- (eout);
+        \foreach \n in {D1,D2,D3,M,U3,U2,U1} {
+                \draw[car] (txt.south -| ca\n) -- (ca\n.north);
+            }
+
+        % what prior work looked at
+        \node[visible on=<2->,draw=gray!55,fill=gray!6,rounded corners=2pt,thick,
+            text width=4.6cm,align=left,inner sep=4pt,font=\scriptsize] (prior) at (10.85,2.35)
+        {\textbf{Prior work} (causal tracing): style and objects localize to the
+            \textbf{first layer of the text encoder}, while inside the U-Net the
+            effect looks \textbf{distributed}.};
+        \draw[gray!55,dashed,thin,visible on=<2->] (prior.west) -- (enc.east);
+
+        % the question
+        \node[visible on=<3->,align=center,font=\small] at (4.6,-1.75)
+        {All \textcolor{xattn}{\textbf{16 cross-attention layers}} receive the \textit{same} $c$.\\[0.3em]
+            \textcolor{themecolor}{\textbf{Are all of them equally responsible?}}};
+    \end{tikzpicture}
+\end{frame}
+
+\begin{frame}{\textsc{LocoGen} (ICML 2024): Give a Subset a Different Prompt}
+    \centering
+    \begin{tikzpicture}[
+            font=\scriptsize,
+            blk/.style={draw=themecolor,fill=themecolor!12,thick,rounded corners=1pt,
+                    minimum width=0.6cm,inner sep=0pt},
+            blkS/.style={draw=xattn,fill=xattn!14,very thick,rounded corners=1pt,
+                    minimum width=0.6cm,inner sep=0pt},
+            ca/.style={draw=xattn,fill=xattn,rounded corners=0.4pt,
+                    minimum width=0.6cm,minimum height=0.16cm,inner sep=0pt},
+            ar/.style={->,>=stealth,themecolor,semithick},
+            car/.style={->,>=stealth,themecolor!55,thin},
+            carS/.style={->,>=stealth,xattn,semithick},
+        ]
+        \path[use as bounding box] (-1.2,-3.3) rectangle (13.1,2.5);
+
+        \node[draw=themecolor,fill=themecolor!8,thick,rounded corners=1.5pt,
+            minimum width=8.6cm,minimum height=0.46cm] (txt) at (3.6,1.9)
+        {$c$ = \textit{``A house in the style of Van Gogh''}};
+
+        \foreach \n/\x/\h in {D1/0/1.35, D2/1.2/1.05, D3/2.4/0.8,
+                U2/6.0/1.05, U1/7.2/1.35} {
+                \node[blk,minimum height=\h cm] (\n) at (\x,0.1) {};
+                \node[ca] (ca\n) at (\x,{0.1+\h/2-0.09}) {};
+            }
+        \foreach \n/\x/\h in {M/3.6/0.6, U3/4.8/0.8} {
+                \node[blkS,minimum height=\h cm] (\n) at (\x,0.1) {};
+                \node[ca] (ca\n) at (\x,{0.1+\h/2-0.09}) {};
+            }
+        \foreach \a/\b in {D1/D2,D2/D3,D3/M,M/U3,U3/U2,U2/U1} {\draw[ar] (\a) -- (\b);}
+        \node (xin)  at (-0.8,0.1) {$x_t$};
+        \node (eout) at (8.0,0.1)  {$\hat\varepsilon$};
+        \draw[ar] (xin) -- (D1);
+        \draw[ar] (U1) -- (eout);
+        \foreach \n in {D1,D2,D3,U2,U1} {\draw[car] (txt.south -| ca\n) -- (ca\n.north);}
+
+        % the replaced prompt for a subset of layers
+        \node[visible on=<2->,draw=xattn,fill=xattn!8,thick,rounded corners=1.5pt,
+            minimum width=5.4cm,minimum height=0.46cm] (txtb) at (4.2,-1.55)
+        {$c'$ = \textit{``a painting of a house''}};
+        \foreach \n in {M,U3} {\draw[carS,visible on=<2->] (txtb.north -| \n) -- (\n.south);}
+
+        % outputs
+        \node[inner sep=0pt,draw=themecolor,line width=0.7pt] (o1) at (9.95,0.85)
+        {\includegraphics[width=1.9cm]{Figures/localize/gen-vangogh.jpg}};
+        \node[align=center,font=\tiny,text width=2.1cm] at (9.95,-0.45)
+        {all layers get $c$\\ \textcolor{themecolor}{\textbf{style present}}};
+        \node[visible on=<2->,inner sep=0pt,draw=xattn,line width=0.7pt] (o2) at (12.05,0.85)
+        {\includegraphics[width=1.9cm]{Figures/localize/gen-plain.jpg}};
+        \node[visible on=<2->,align=center,font=\tiny,text width=2.1cm] at (12.05,-0.45)
+        {subset gets $c'$\\ \textcolor{xattn}{\textbf{style ablated}}};
+
+        \node[visible on=<3->,align=center,font=\small] at (5.4,-2.75)
+        {The style disappears when only \textcolor{xattn}{\textbf{a few adjacent layers}} see $c'$.\\[0.25em]
+            \textcolor{themecolor}{\textbf{Is that where ``Van Gogh'' is stored?}}};
+    \end{tikzpicture}
+
+    \vspace{-0.3em}
+    {\scriptsize\color{gray!50!black} Basu, \textbf{Rezaei}, et al.
+        \textit{On Mechanistic Knowledge Localization in Text-to-Image Generative Models}. ICML 2024.}
 \end{frame}
 
 \section{Edit}
