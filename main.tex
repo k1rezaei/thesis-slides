@@ -546,7 +546,7 @@
             \begin{tcolorbox}[colback=xattn!6,colframe=xattn,arc=1.5mm,boxrule=0.8pt,
                     left=4pt,right=4pt,top=3pt,bottom=3pt,
                     fonttitle=\bfseries\small,coltitle=white,colbacktitle=xattn,
-                    title=$X_\text{orig}$]
+                    title=$C_\text{orig}$]
                 \footnotesize
                 \textit{``A house in the style of Van Gogh''}\\
                 \textit{``A starry night in the style of Van Gogh''}\\
@@ -556,7 +556,7 @@
             \begin{tcolorbox}[colback=themecolor!6,colframe=themecolor,arc=1.5mm,boxrule=0.8pt,
                     left=4pt,right=4pt,top=3pt,bottom=3pt,
                     fonttitle=\bfseries\small,coltitle=white,colbacktitle=themecolor,
-                    title=$X_\text{target}$]
+                    title=$C_\text{target}$]
                 \footnotesize
                 \textit{``a painting of a house''}\\
                 \textit{``a painting of a starry night''}\\
@@ -568,14 +568,14 @@
     \uncover<2->{%
         \vspace{-0.4em}
         \[
-            \min_{W^K}\ \big\| X_\text{orig} W^K - X_\text{target} \hat{W}^K \big\|_2^2
+            \min_{W^K}\ \big\| C_\text{orig} W^K - C_\text{target} \hat{W}^K \big\|_2^2
             + \lambda_K \big\| W^K - \hat{W}^K \big\|_2^2
         \]}
     \vspace{-0.7em}
     \uncover<3->{%
         \[
-            W^K = \big(X_\text{orig}^{\top} X_\text{orig} + \lambda_K I\big)^{-1}
-            \big(X_\text{orig}^{\top} Y_\text{target} + \lambda_K \hat{W}^K\big)
+            W^K = \big(C_\text{orig}^{\top} C_\text{orig} + \lambda_K I\big)^{-1}
+            \big(C_\text{orig}^{\top} Y_\text{target} + \lambda_K \hat{W}^K\big)
         \]
         \vspace{-1.1em}
         \begin{center}
