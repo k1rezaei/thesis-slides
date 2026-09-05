@@ -374,14 +374,15 @@
 \begin{frame}{\textsc{LocoGen}: Searching for the Controlling Layers}
     \centering
     \uncover<1->{%
-        Which $m$ of the $M$ cross-attention layers should get $c'$?
-        \textbf{Brute force} tries all $\binom{M}{m}$ subsets ---
-        for SD-XL ($M=70$, $m=5$) that is over \textcolor{xattn}{\textbf{12 million}}.}
+        Which $m$ of the $M$ cross-attention layers should get $c'$?\\
+        \textbf{Brute force} tries all $\binom{M}{m}$ subsets
+        {\scriptsize\textcolor{xattn}{(SD-XL: 12M)}}.}
 
     \vspace{0.5em}
     \uncover<2->{%
         Restricting the search to \textcolor{themecolor}{\textbf{adjacent}} layers
-        leaves only $M-m+1$ windows --- \textcolor{themecolor}{\textbf{66}} for SD-XL.}
+        leaves only $M-m+1$ windows
+        {\scriptsize\textcolor{themecolor}{(SD-XL: 66)}}.}
 
     \vspace{0.7em}
     \uncover<3->{%
@@ -403,6 +404,24 @@
         $m$ itself is swept upward: the \textbf{smallest} window that removes the attribute.}
 \end{frame}
 
+\begin{frame}{Reading the Location Off a CLIP-Score Sweep}
+    \centering
+    \includegraphics[width=\textwidth]{Figures/localize/clip-score-layers.jpg}
+
+    \vspace{0.5em}
+    \uncover<2->{%
+        \small Each bar is one candidate window. For
+        \textcolor{themecolor}{\textbf{style}} and
+        \textcolor{themecolor}{\textbf{objects}} the \textbf{dip} marks the
+        controlling layers; for \textcolor{themecolor}{\textbf{facts}} the
+        \textbf{peak} does.}
+
+    \vspace{0.3em}
+    \uncover<3->{%
+        {\scriptsize\color{gray!45!black} The $x$-axis is the window \textit{start} $l$:
+            for SD-v1-5 ($m=2$), $l=8$ covers layers 8--9.}}
+\end{frame}
+
 \begin{frame}{How Few Layers Are Enough?}
     \centering
     \begin{table}
@@ -416,30 +435,31 @@
             Stable Diffusion v2-1 & 16                       & 3          & \textbf{19\%}   \\
             OpenJourney           & 16                       & 2          & \textbf{13\%}   \\
             SD-XL                 & 70                       & 5          & \textbf{7\%}    \\
-            DeepFloyd             & 22                       & 3          & \textbf{14\%}   \\
             \bottomrule
         \end{tabular}
     \end{table}
     \vspace{0.3em}
     Across every model, a \textcolor{themecolor}{\textbf{handful of adjacent layers}}
     --- never more than a fifth of them --- controls a visual attribute.
+
+    \vspace{0.5em}
+    {\scriptsize\color{gray!45!black} The window is reported by its start $l$:
+        for SD-v1-5 ($m=2$), ``layer 8'' means layers 8--9.}
 \end{frame}
 
 \begin{frame}{The Same Recipe for Style, Objects and Facts}
     \centering
     \includegraphics[width=\textwidth]{Figures/localize/attributes-row.jpg}
 
-    \vspace{0.4em}
-    \uncover<2->{%
-        \small For SD variants, OpenJourney and SD-XL the location depends on the
-        \textcolor{themecolor}{\textbf{attribute}}, not the prompt:\\
-        \textit{Van Gogh} and \textit{Monet} are both controlled from layer 8.}
-
     \vspace{0.3em}
+    \uncover<2->{\includegraphics[width=\textwidth]{Figures/localize/attributes-row2.jpg}}
+
+    \vspace{0.5em}
     \uncover<3->{%
-        \small DeepFloyd is the exception --- there it is
-        \textcolor{xattn}{\textbf{prompt-specific}}:\\
-        \textit{Van Gogh} from layer 12, \textit{Monet} from layer 16.}
+        \small The location follows the
+        \textcolor{themecolor}{\textbf{attribute}},
+        \textcolor{xattn}{\textbf{not the prompt}}:\\
+        \textit{Van Gogh} and \textit{Monet} are controlled from the same window.}
 \end{frame}
 
 \begin{frame}{Inside Cross-Attention}
