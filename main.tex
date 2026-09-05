@@ -410,16 +410,11 @@
 
     \vspace{0.5em}
     \uncover<2->{%
-        \small Each bar is one candidate window. For
-        \textcolor{themecolor}{\textbf{style}} and
+        \small Each bar is one candidate window.\\
+        For \textcolor{themecolor}{\textbf{style}} and
         \textcolor{themecolor}{\textbf{objects}} the \textbf{dip} marks the
         controlling layers; for \textcolor{themecolor}{\textbf{facts}} the
         \textbf{peak} does.}
-
-    \vspace{0.3em}
-    \uncover<3->{%
-        {\scriptsize\color{gray!45!black} The $x$-axis is the window \textit{start} $l$:
-            for SD-v1-5 ($m=2$), $l=8$ covers layers 8--9.}}
 \end{frame}
 
 \begin{frame}{How Few Layers Are Enough?}
@@ -440,7 +435,7 @@
     \end{table}
     \vspace{0.3em}
     Across every model, a \textcolor{themecolor}{\textbf{handful of adjacent layers}}
-    --- never more than a fifth of them --- controls a visual attribute.
+    ($\leq 20\%$) controls a visual attribute.
 
     \vspace{0.5em}
     {\scriptsize\color{gray!45!black} The window is reported by its start $l$:
@@ -460,6 +455,33 @@
         \textcolor{themecolor}{\textbf{attribute}},
         \textcolor{xattn}{\textbf{not the prompt}}:\\
         \textit{Van Gogh} and \textit{Monet} are controlled from the same window.}
+\end{frame}
+
+\begin{frame}{We Can Localize --- What Now?}
+    \centering
+    \vspace{0.5em}
+    \begin{columns}[c,onlytextwidth]
+        \column{0.42\textwidth}
+        \begin{tcolorbox}[colback=themecolor!6,colframe=themecolor,arc=2mm,boxrule=0.9pt,
+                valign=center,height=2.6cm,halign=center]
+            \textbf{Localize}\\[0.3em]
+            {\small a few adjacent cross-attention\\ layers carry the concept}
+        \end{tcolorbox}
+        \column{0.10\textwidth}
+        \centering{\color{themecolor}\Large$\longrightarrow$}
+        \column{0.42\textwidth}
+        \uncover<2->{%
+            \begin{tcolorbox}[colback=xattn!6,colframe=xattn,arc=2mm,boxrule=0.9pt,
+                    valign=center,height=2.6cm,halign=center]
+                \textbf{Edit}\\[0.3em]
+                {\small write the change into those\\ weights, once and for all}
+            \end{tcolorbox}}
+    \end{columns}
+
+    \vspace{1.2em}
+    \uncover<3->{%
+        Swapping the input only helps \textbf{at inference}, one prompt at a time.\\[0.3em]
+        \textcolor{themecolor}{\textbf{Can we put the change in the weights instead?}}}
 \end{frame}
 
 \begin{frame}{Inside Cross-Attention}
@@ -514,8 +536,54 @@
 \end{frame}
 
 \section{Edit}
-\begin{frame}{Edit}
-    % TODO
+\begin{frame}{\textsc{LocoEdit}: Rewrite the Located Layers}
+    \centering
+    In the located layers, make the \textcolor{xattn}{\textbf{keys and values of $c$}}
+    look like those of \textcolor{themecolor}{\textbf{$c'$}}:
+    \vspace{-0.3em}
+    \[
+        \min_{W^K_l}\ \big\| X_\text{orig} W^K_l - X_\text{target} \hat{W}^K_l \big\|_2^2
+        + \lambda_K \big\| W^K_l - \hat{W}^K_l \big\|_2^2
+    \]
+    \vspace{-1.0em}
+    \uncover<2->{%
+        \begin{center}
+            one linear solve --- no gradients, no fine-tuning:
+        \end{center}
+        \vspace{-1.2em}
+        \[
+            W^K_l = \big(X_\text{orig}^{\top} X_\text{orig} + \lambda_K I\big)^{-1}
+            \big(X_\text{orig}^{\top} Y_\text{target} + \lambda_K \hat{W}^K_l\big)
+        \]
+        \vspace{-0.9em}
+        \begin{center}
+            {\small and the same for $W^V_l$.}
+        \end{center}}
+\end{frame}
+
+\begin{frame}{How Little Gets Touched}
+    \centering
+    \vspace{0.5em}
+    For SD-v1-5 style, the located window is layers 8--9, each holding
+    $W^K, W^V \in \mathbb{R}^{768 \times 1280}$:
+    \vspace{0.8em}
+
+    \begin{tabular}{r@{\ }l}
+        $2$ layers $\times$ $2$ matrices $\times$ $0.98$M & $\approx$ \textcolor{xattn}{\textbf{4M parameters}} \\[0.3em]
+        out of a U-Net of                                 & $\approx$ \textcolor{themecolor}{\textbf{860M}}     \\[0.3em]
+        that is                                           & $\approx$ \textcolor{xattn}{\textbf{0.5\%}}         \\
+    \end{tabular}
+
+    \vspace{1.0em}
+    \uncover<2->{%
+        The same solve \textbf{removes a style}, \textbf{swaps a trademarked object},
+        or \textbf{updates an outdated fact} --- and it is
+        \textcolor{themecolor}{\textbf{permanent}}, not a per-prompt trick.}
+\end{frame}
+
+\begin{frame}{\textsc{LocoEdit}: Edits Across Models and Attributes}
+    \centering
+    \includegraphics[height=0.78\textheight]{Figures/localize/locoedit-results.jpg}
 \end{frame}
 
 \section{Unlearn}
