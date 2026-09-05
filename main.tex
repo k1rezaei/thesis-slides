@@ -623,8 +623,7 @@
             Editing method            & style-edited model & object-edited model \\
             \midrule
             no editing                & 30.04              & 30.04               \\
-            DiffQuickFix              & 29.61              & 29.32               \\
-            \textsc{LocoEdit} (ours)  & \textbf{29.99}     & \textbf{29.40}      \\
+            \textsc{LocoEdit}         & \textbf{29.99}     & \textbf{29.40}      \\
             \bottomrule
         \end{tabular}
         \caption{\footnotesize CLIP-Score of generations for the generic prompts.}
@@ -632,9 +631,8 @@
 
     \vspace{0.2em}
     \uncover<2->{%
-        The edited model scores essentially what the original does ---
-        and drops \textcolor{themecolor}{\textbf{less}} than the text-encoder edit
-        it is compared against.}
+        The edited model scores \textcolor{themecolor}{\textbf{essentially what the
+                original does}} --- generations unrelated to the edit are untouched.}
 \end{frame}
 
 \section{Unlearn}
