@@ -127,24 +127,45 @@
 
 \begin{frame}{Research Theme}
     \centering
-    We aim to understand AI from a \textcolor{themecolor}{\textbf{model}} and \textcolor{themecolor}{\textbf{data}} perspective.
+    \uncover<1->{Aside from retrieval at inference time and tool calling,
+        all of a model's knowledge is stored in its
+        \textcolor{themecolor}{\textbf{parameters}}.}
 
-    \vspace{1.5em}
+    \vspace{1em}
+    \uncover<2->{We aim to understand AI from a
+        \textcolor{themecolor}{\textbf{model}} and
+        \textcolor{themecolor}{\textbf{data}} perspective.}
+
+    \vspace{0.5em}
     \begin{columns}[T,onlytextwidth]
-        \column{0.48\textwidth}
-        \begin{block}{Understanding Model}
-            \begin{itemize}
-                \item How is knowledge localized?
-                \item What are the failures of these systems?
-            \end{itemize}
+        \column{0.47\textwidth}
+        \begin{block}<3->{Understanding Model}
+            \parbox[t][3\baselineskip][c]{\linewidth}{\centering
+                Where is the knowledge?\\
+                Can we localize it?}
         \end{block}
-        \column{0.48\textwidth}
-        \begin{block}{Understanding Data}
-            \begin{itemize}
-                \item What is the role of training samples on the resulting model?
-                \item Can we undo the effect of samples?
-            \end{itemize}
+        \uncover<4->{%
+            \vspace{0.1em}
+            \centering
+            {\color{themecolor}\large$\downarrow$}\\[0.15em]
+            \small\textbf{Efficient, surgical model editing}\par
+        }
+
+        \column{0.47\textwidth}
+        \begin{block}<3->{Understanding Data}
+            \parbox[t][3\baselineskip][c]{\linewidth}{\centering
+                How does a training sample\\
+                affect the model?\\
+                Can we measure that?}
         \end{block}
+        \uncover<4->{%
+            \vspace{0.1em}
+            \centering
+            {\color{themecolor}\large$\downarrow$}\\[0.15em]
+            \small\textbf{Data attribution}\\
+            \small\textbf{Dataset selection}\\
+            \small\textbf{Machine unlearning}\par
+        }
     \end{columns}
 \end{frame}
 
