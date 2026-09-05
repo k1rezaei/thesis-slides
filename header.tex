@@ -9,6 +9,7 @@
 \usepackage{array}
 \usepackage{enumerate}
 \usepackage{booktabs}
+\usepackage{fontawesome5}
 \usepackage{adjustbox}
 \usepackage{xspace}
 \usepackage{indentfirst}
@@ -275,3 +276,15 @@
     arc=1.5mm,boxrule=0.8pt,left=3pt,right=3pt,top=3pt,bottom=3pt}
 \newcommand{\dalle}{DALL\textperiodcentered E}
 \newcommand{\dstep}[1]{\raisebox{-0.5\height}{\includegraphics[width=0.185\textwidth]{Figures/genai/diffusion/#1.png}}}
+
+% Icon labels replacing the "Train:" / "Architecture:" captions.
+% Descending training-loss curve, used in place of a "Train:" caption.
+\newcommand{\lbltrain}{%
+    \tikz[baseline=-0.55ex,scale=0.12,line cap=round,line join=round]{
+        \draw[themecolor,line width=1.5pt] (0,3.0) -- (0,0) -- (3.8,0);
+        \draw[themecolor,line width=1.8pt] plot[smooth,domain=0.45:3.5,samples=50]
+        (\x, {0.5+2.5*exp(-1.5*(\x-0.45))});
+        \fill[themecolor] (3.5,{0.5+2.5*exp(-1.5*3.05)}) circle (0.34);
+    }%
+}
+\newcommand{\lblarch}{{\color{themecolor}\large\faSitemap}}

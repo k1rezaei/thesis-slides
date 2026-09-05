@@ -88,10 +88,10 @@
     \end{center}
     \vspace{-0.2em}
     \begin{center}
-        \textbf{Train:}\quad
+        \lbltrain\quad
         $\displaystyle \mathcal{L}(\theta) = \mathbb{E}_{t,\varepsilon} \big\| \varepsilon - \varepsilon_\theta(x_t, t, c) \big\|^2$
         \hspace{2.5em}
-        \textbf{Architecture:}\quad U-Net $\longrightarrow$ Transformer
+        \lblarch\quad U-Net $\longrightarrow$ Transformer
     \end{center}
     \vspace{-0.2em}
     \begin{center}
@@ -114,10 +114,10 @@
     \end{center}
     \vspace{-0.6em}
     \begin{center}
-        \textbf{Train:}\quad
+        \lbltrain\quad
         $\displaystyle \mathcal{L}(\theta) = -\sum_{t=1}^{T} \log p_\theta\big(x_t \mid x_1, \dots, x_{t-1}\big)$
         \hspace{2.5em}
-        \textbf{Architecture:}\quad Transformer
+        \lblarch\quad Transformer
     \end{center}
     \vspace{-0.2em}
     \begin{center}
