@@ -457,7 +457,7 @@
         \textit{Van Gogh} and \textit{Monet} are controlled from the same window.}
 \end{frame}
 
-\begin{frame}{We Can Localize --- What Now?}
+\begin{frame}{We Can Localize. What Now?}
     \centering
     \vspace{0.5em}
     \begin{columns}[c,onlytextwidth]
@@ -579,7 +579,7 @@
         \]
         \vspace{-1.1em}
         \begin{center}
-            {\small one linear solve --- no gradients, no fine-tuning; same for $W^V$.}
+            {\small one linear solve: no gradients, no fine-tuning; same for $W^V$.}
         \end{center}}
 \end{frame}
 
@@ -598,7 +598,7 @@
 
     \vspace{1.0em}
     \uncover<2->{%
-        One solve --- \textcolor{themecolor}{\textbf{permanently}} edit a
+        One solve: \textcolor{themecolor}{\textbf{permanently}} edit a
         \textbf{style}, a \textbf{trademarked object}, or an \textbf{outdated fact}.}
 \end{frame}
 
@@ -626,10 +626,173 @@
         \caption{\footnotesize CLIP-Score of generations for the generic prompts.}
     \end{table}
 
-    \vspace{0.2em}
+\end{frame}
+
+
+\begin{frame}{Neuron-Level Editing}
+    % PLACEHOLDER: neuron-level analysis goes here.
+    \centering
+    \vfill
+    {\color{gray!50}\small[ placeholder ]}
+    \vfill
+\end{frame}
+
+\begin{frame}{Two Loose Ends}
+    \centering
+    \uncover<1->{%
+        \begin{tcolorbox}[colback=gray!4,colframe=gray!55,arc=1.5mm,boxrule=0.8pt,
+                width=0.9\textwidth,left=6pt,right=6pt,top=4pt,bottom=4pt]
+            \small The window was a \textbf{heuristic}: brute force is exponential, so we
+            simply \textit{assumed} the controlling layers sit next to each other.
+        \end{tcolorbox}}
+
+    \vspace{0.7em}
     \uncover<2->{%
-        The edited model scores \textcolor{themecolor}{\textbf{essentially what the
-                original does}} --- generations unrelated to the edit are untouched.}
+        \begin{tcolorbox}[colback=xattn!5,colframe=xattn,arc=1.5mm,boxrule=0.8pt,
+                width=0.9\textwidth,left=6pt,right=6pt,top=4pt,bottom=4pt]
+            \small And text-to-image has moved off U-Nets:
+            \textbf{PixArt-$\alpha$}, \textbf{FLUX}, \textbf{SANA} are
+            \textbf{Diffusion Transformers}, where ``a window of adjacent layers''
+            means little.
+        \end{tcolorbox}}
+
+    \vspace{0.9em}
+    \uncover<3->{%
+        We want a signal read \textcolor{themecolor}{\textbf{straight off the model}}:
+        no search, any architecture, any concept.}
+\end{frame}
+
+\begin{frame}{Inside a Diffusion Transformer}
+    \centering
+    \begin{tikzpicture}[
+            font=\scriptsize,
+            stream/.style={->,>=stealth,themecolor!70,semithick},
+            band/.style={draw=themecolor,fill=themecolor!5,thick,rounded corners=1.5pt},
+            sa/.style={draw=themecolor!70,fill=themecolor!18,rounded corners=1pt},
+            ca/.style={draw=xattn,fill=xattn!35,rounded corners=1pt},
+            mlp/.style={draw=themecolor!70,fill=themecolor!10,rounded corners=1pt},
+            car/.style={->,>=stealth,xattn,thin},
+            patch/.style={draw=themecolor,fill=themecolor!15,thin},
+        ]
+        \path[use as bounding box] (-2.4,-2.0) rectangle (11.7,2.6);
+
+        % image patches on the left
+        \foreach \r in {0,1,2}{\foreach \c in {0,1,2}{
+                    \node[patch,minimum width=0.3cm,minimum height=0.3cm,inner sep=0pt]
+                    at ({-2.05+0.31*\c},{0.32-0.31*\r}) {};
+                }}
+        \node[font=\tiny,align=center,gray!50!black] at (-1.74,-0.75) {image\\ patches};
+
+        % residual streams
+        \foreach \y in {0.75,0.3,-0.15,-0.6} {\draw[stream] (-1.35,\y) -- (10.05,\y);}
+        \node[font=\small] at (-1.55,-1.05) {$\vdots$};
+
+        % transformer blocks
+        \foreach \x/\n in {1.4/1, 3.5/2, 5.6/3, 7.7/4} {
+                \node[band,minimum width=1.5cm,minimum height=2.5cm,inner sep=0pt] (b\n) at (\x,0.06) {};
+                \node[sa, minimum width=0.36cm,minimum height=2.15cm,inner sep=0pt] at ({\x-0.47},0.06) {};
+                \node[ca, minimum width=0.36cm,minimum height=2.15cm,inner sep=0pt] (ca\n) at (\x,0.06) {};
+                \node[mlp,minimum width=0.36cm,minimum height=2.15cm,inner sep=0pt] at ({\x+0.47},0.06) {};
+                \node[rotate=90,font=\tiny] at ({\x-0.47},0.06) {Self-Attn};
+                \node[rotate=90,font=\tiny,xattn] at (\x,0.06) {\textbf{Cross-Attn}};
+                \node[rotate=90,font=\tiny] at ({\x+0.47},0.06) {MLP};
+            }
+        \node[font=\small] at (9.0,0.06) {$\cdots$};
+        \node[font=\tiny,gray!50!black] at (4.55,-1.55) {$L$ identical blocks};
+
+        % prompt in through every block
+        \node[draw=xattn,fill=xattn!7,thick,rounded corners=1.5pt,
+            minimum width=8.6cm,minimum height=0.46cm] (txt) at (4.55,2.1)
+        {\textit{``A house in the style of Van Gogh''} $\;\longrightarrow\;$ text tokens};
+        \foreach \n in {1,2,3,4} {\draw[car] (txt.south -| ca\n) -- (ca\n.north);}
+
+        % output
+        \node[inner sep=0pt,draw=themecolor,line width=0.7pt] (img) at (10.9,0.06)
+        {\includegraphics[width=1.4cm]{Figures/localize/gen-vangogh.jpg}};
+        \draw[->,>=stealth,themecolor,semithick] (10.05,0.06) -- (img);
+    \end{tikzpicture}
+
+    \vspace{0.2em}
+    {\small Each patch keeps its own \textcolor{themecolor}{\textbf{stream}};
+    the prompt enters every block through \textcolor{xattn}{\textbf{cross-attention}}.}
+\end{frame}
+
+\begin{frame}{Localizing by Attention Contribution}
+    \centering
+    How hard does text token $\mathbf{x}_j$ \textbf{push} on image token $\mathbf{y}_i$
+    in this block?
+    \vspace{-0.3em}
+    \[
+        \text{cont}_{i,j} \;=\; \Big\| \sum_{h=1}^{H} \text{attn}^h_{i,j}\;
+        \mathbf{v}^h_j\, W^h_o \Big\|_2
+    \]
+    \vspace{-1.0em}
+    \uncover<2->{%
+        \begin{itemize}\small
+            \item Average over image tokens, prompts and seeds
+                  $\Rightarrow$ one score per block.
+            \item Keep the \textcolor{themecolor}{\textbf{top-$K$ blocks}}
+                  $\mathcal{B}^\kappa_K$ for the knowledge $\kappa$.
+        \end{itemize}}
+    \vspace{0.2em}
+    \uncover<3->{%
+        \begin{tcolorbox}[colback=xattn!5,colframe=xattn,arc=1.5mm,boxrule=0.8pt,
+                width=0.92\textwidth,left=6pt,right=6pt,top=4pt,bottom=4pt]
+            \small \textbf{No search at all.} One forward pass gives the ranking,
+            and it is \textbf{model-} and \textbf{knowledge-agnostic}.
+        \end{tcolorbox}}
+\end{frame}
+
+\begin{frame}{$\mathcal{L}$oc$\mathcal{K}$: Probing Six Kinds of Knowledge}
+    \centering
+    \small Every prompt comes with a \textbf{knowledge-agnostic twin}:
+    \vspace{0.4em}
+
+    \begin{tabular}{r@{\ \ }l}
+        $p^\kappa$                 & \textit{``the Batman walking through a desert''}   \\[0.2em]
+        $p^{\kappa\text{-neutral}}$ & \textit{``a character walking through a desert''} \\
+    \end{tabular}
+
+    \vspace{0.8em}
+    \small Categories: \textbf{artistic styles}, \textbf{celebrities},
+    \textbf{safety content}, \textbf{copyrighted characters},
+    \textbf{landmarks}, \textbf{animals}.
+
+    \vspace{0.9em}
+    \uncover<2->{%
+        \begin{tcolorbox}[colback=themecolor!5,colframe=themecolor,arc=1.5mm,boxrule=0.8pt,
+                width=0.92\textwidth,left=6pt,right=6pt,top=4pt,bottom=4pt]
+            \small \textbf{The test:} feed $p^\kappa$ everywhere, but hand the top-$K$
+            blocks $p^{\kappa\text{-neutral}}$ instead. If the concept vanishes,
+            those blocks were carrying it.
+        \end{tcolorbox}}
+\end{frame}
+
+\begin{frame}{Where Knowledge Lives, Model by Model}
+    \centering
+    \includegraphics[height=0.73\textheight]{Figures/dit/localization-models.jpg}
+
+    \vspace{0.2em}
+    {\scriptsize\color{gray!50!black} Green: normal generation. Red: knowledge withheld
+    from the localized blocks. Bars: how often each block is picked.}
+\end{frame}
+
+\begin{frame}{Some Concepts Are Tighter Than Others}
+    \centering
+    \includegraphics[height=0.74\textheight]{Figures/dit/k-sweep.jpg}
+
+    \vspace{0.2em}
+    {\scriptsize\color{gray!50!black} Intervening on the top-$K$\% of blocks.
+    Copyright, place and celebrity collapse early; animals are spread much wider.}
+\end{frame}
+
+\begin{frame}{Even Two Artists Need Different Blocks}
+    \centering
+    \includegraphics[height=0.72\textheight]{Figures/dit/style-blocks.jpg}
+
+    \vspace{0.2em}
+    {\small Picasso needs $K=8$ blocks, Caulfield $K=4$;
+    \textcolor{themecolor}{\textbf{Van Gogh $K=12$}}, Monet $K=10$.}
 \end{frame}
 
 \section{Unlearn}
@@ -645,7 +808,7 @@
     \end{itemize}
     \vspace{0.5em}
     \begin{block}{Goal}
-        Given $\theta_\mathcal{D}$ and $\mathcal{D}_\text{f}$, produce a model functionally equivalent to one trained from scratch on $\mathcal{D} \setminus \mathcal{D}_\text{f}$ --- without the cost of retraining.
+        Given $\theta_\mathcal{D}$ and $\mathcal{D}_\text{f}$, produce a model functionally equivalent to one trained from scratch on $\mathcal{D} \setminus \mathcal{D}_\text{f}$, without the cost of retraining.
     \end{block}
     \vspace{0.3em}
     Motivated by real needs: privacy regulation (e.g., the EU's \emph{Right to Be Forgotten}), correcting misinformation, and removing copyrighted content.
@@ -670,7 +833,7 @@
     \end{enumerate}
     \vspace{0.5em}
     \begin{block}{Key idea}
-        Success isn't just \emph{forgetting} the corrupted facts --- it's \emph{recovering} the entity's correct value, matching $\theta_\text{ideal}$.
+        Success isn't just \emph{forgetting} the corrupted facts; it's \emph{recovering} the entity's correct value, matching $\theta_\text{ideal}$.
     \end{block}
 \end{frame}
 
@@ -700,14 +863,14 @@
 \begin{frame}{Model State Arithmetic (MSA)}
     Prior data-level unlearning methods operate \textbf{only on the final trained model} $\theta_\mathcal{D}$:
     \begin{itemize}
-        \item \textbf{Gradient-based:} Gradient Ascent, GradDiff, KL-Divergence --- increase loss on the forget set.
+        \item \textbf{Gradient-based:} Gradient Ascent, GradDiff, KL-Divergence, which increase loss on the forget set.
         \item \textbf{Preference-based:} NPO.
-        \item \textbf{Weight-space:} Task Vectors --- subtract a direction computed \emph{from the final model}.
+        \item \textbf{Weight-space:} Task Vectors, which subtract a direction computed \emph{from the final model}.
         \item \textbf{Others:} SatImp, RMU, UNDIAL.
     \end{itemize}
     \vspace{0.3em}
     \begin{block}{Limitation}
-        All of these estimate the effect of $\mathcal{D}_\text{f}$ using a model that has \emph{already} internalized it --- entangled with everything else it has since learned.
+        All of these estimate the effect of $\mathcal{D}_\text{f}$ using a model that has \emph{already} internalized it, entangled with everything else it has since learned.
     \end{block}
 \end{frame}
 
