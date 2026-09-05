@@ -180,8 +180,67 @@
     \roadmap{2}
 \end{frame}
 
-\begin{frame}{Localize}
-    % TODO
+\begin{frame}{Inside a U-Net Diffusion Model}
+    \centering
+    \begin{tikzpicture}[
+            font=\scriptsize,
+            blk/.style={draw=themecolor,fill=themecolor!12,thick,rounded corners=1pt,
+                    minimum width=0.6cm,inner sep=0pt},
+            ca/.style={draw=xattn,fill=xattn,rounded corners=0.4pt,
+                    minimum width=0.6cm,minimum height=0.16cm,inner sep=0pt},
+            ar/.style={->,>=stealth,themecolor,semithick},
+            car/.style={->,>=stealth,xattn,thin},
+            skip/.style={->,>=stealth,gray!45,dashed,thin},
+        ]
+        \path[use as bounding box] (-1.2,-3.15) rectangle (12.7,2.55);
+
+        % encoder / bottleneck / decoder
+        \foreach \n/\x/\h in {D1/0/1.35, D2/1.2/1.05, D3/2.4/0.8, M/3.6/0.6,
+                U3/4.8/0.8, U2/6.0/1.05, U1/7.2/1.35} {
+                \node[blk,minimum height=\h cm] (\n) at (\x,0.35) {};
+                \node[ca] (ca\n) at (\x,{0.35+\h/2-0.09}) {};
+            }
+        \foreach \a/\b in {D1/D2,D2/D3,D3/M,M/U3,U3/U2,U2/U1} {\draw[ar] (\a) -- (\b);}
+        \draw[skip] (D1.south) to[bend right=18] (U1.south);
+        \draw[skip] (D2.south) to[bend right=18] (U2.south);
+        \draw[skip] (D3.south) to[bend right=20] (U3.south);
+
+        \node (xin)  at (-0.8,0.35) {$x_t$};
+        \node (eout) at (8.0,0.35)  {$\hat\varepsilon$};
+        \draw[ar] (xin) -- (D1);
+        \draw[ar] (U1) -- (eout);
+
+        % the sample
+        \node[inner sep=0pt,draw=themecolor,line width=0.7pt] (img) at (10.6,1.0)
+        {\includegraphics[width=2.3cm]{Figures/localize/vangogh-house.jpg}};
+        \draw[ar] (eout) -- node[above,font=\tiny,gray!50!black] {$\times T$} (img);
+
+        % text enters only through cross-attention
+        \node[visible on=<2->,draw=xattn,fill=xattn!7,thick,rounded corners=1.5pt,
+            minimum width=8.6cm,minimum height=0.46cm,inner sep=2pt] (txt) at (3.6,2.15)
+        {\textit{``a house in the style of Van Gogh''} $\;\longrightarrow\;$ text embedding $c$};
+        \foreach \n in {D1,D2,D3,M,U3,U2,U1} {
+                \draw[car,visible on=<2->] (txt.south -| ca\n) -- (ca\n.north);
+            }
+
+        % zoom on one cross-attention layer
+        \node[visible on=<3->,draw=xattn,thick,rounded corners=1pt,
+            minimum width=0.78cm,minimum height=0.32cm,inner sep=0pt] (sel) at (3.6,0.56) {};
+        \node[visible on=<3->,draw=xattn,fill=xattn!6,thick,rounded corners=2pt,
+            text width=6cm,align=left,inner sep=5pt] (zoom) at (3.2,-2.3)
+        {\textbf{\textcolor{xattn}{Cross-attention}}\\
+            $Q$ from the image latent, $K,V$ from the text $c$\\
+            \textcolor{xattn}{the only path text takes into the model}};
+        \draw[xattn,dashed,thin,visible on=<3->] (sel.south west) -- (zoom.north west);
+        \draw[xattn,dashed,thin,visible on=<3->] (sel.south east) -- (zoom.north east);
+
+        % the questions
+        \node[visible on=<4->,text width=5cm,align=left,font=\small] at (10.15,-1.95)
+        {\textcolor{gray!45!black}{\scriptsize$\sim$865M parameters, dozens of layers.}\\[0.6em]
+            Where in the model is\\[0.2em]
+            the knowledge of \textcolor{themecolor}{\textbf{house}}?\\[0.15em]
+            the knowledge of \textcolor{themecolor}{\textbf{Van Gogh}}?};
+    \end{tikzpicture}
 \end{frame}
 
 \section{Edit}
