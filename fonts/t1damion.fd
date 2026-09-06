@@ -1,0 +1,5 @@
+
+\ProvidesFile{t1damion.fd}
+\DeclareFontFamily{T1}{damion}{}
+\DeclareFontShape{T1}{damion}{m}{n}{ <-> damion}{}
+\pdfmapline{+damion\space <Damion-Regular.ttf\space <T1-WGL4.enc}

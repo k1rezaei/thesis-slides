@@ -18,6 +18,7 @@
 \end{frame}
 
 \begin{frame}{Table of Content}
+    \footnotesize
     \tableofcontents[hideallsubsections]
 \end{frame}
 
@@ -1445,8 +1446,8 @@
         \]}
 
     \vspace{-0.2em}
-    {\tiny\color{gray!50!black} \textbf{Rezaei}, Chandu, Feizi, Choi, Brahman, Ravichander.
-        \textit{Revisiting the Past: Data Unlearning with Model State History}. 2025.}
+    {\tiny\color{gray!50!black} \textbf{Rezaei}, Saberi, Ravichander, Feizi.
+        \textit{Revisiting the Past: Data Unlearning with Model State History}. ICLR 2026.}
 \end{frame}
 
 \begin{frame}{MSA: How We Ran It}
@@ -1528,9 +1529,242 @@
     \end{itemize}
 \end{frame}
 
+\section{Other Directions}
+
+\begin{frame}{The Click Is Disappearing}
+    \centering
+    \begin{tikzpicture}[font=\scriptsize]
+        \path[use as bounding box] (-0.2,-4.2) rectangle (13.2,1.0);
+
+        % ---- the search box
+        \node[draw=gray!55,fill=white,thick,rounded corners=6pt,
+            minimum width=7.4cm,minimum height=0.6cm,align=left,anchor=west]
+        (sb) at (0.3,0.5) {\hspace{0.15cm}\textit{best laptop for a computer science student}};
+
+        % ---- the AI overview panel
+        \node[draw=themecolor,fill=themecolor!7,thick,rounded corners=3pt,
+            minimum width=7.4cm,minimum height=2.0cm,anchor=north west,
+            text width=7.0cm,align=left,inner sep=6pt] (ai) at (0.3,-0.2)
+        {\textcolor{themecolor}{\textbf{AI overview}}\\[0.25em]
+            \textcolor{gray!35!black}{For coursework and light development, look for at
+                least 16\,GB of memory and a recent 8-core processor. Battery life
+                matters more than raw speed. Most students are well served by\dots}};
+
+        % ---- the links, pushed down
+        \foreach \y/\t in {-2.55/{\textcolor{blue!45!black}{laptopreview.example} \textemdash\ 12 best laptops for students},
+                -3.25/{\textcolor{blue!45!black}{techstore.example} \textemdash\ student laptop deals}} {
+                \node[anchor=west,text=gray!60,font=\scriptsize] at (0.45,\y) {\t};
+            }
+        \draw[gray!35] (0.3,-2.9) -- (7.7,-2.9);
+
+        % ---- the annotation
+        \node[draw=xattn,fill=xattn!8,thick,rounded corners=2pt,text width=4.4cm,
+            align=left,inner sep=5pt,font=\scriptsize] (n1) at (10.6,-1.0)
+        {The answer arrives \textbf{above} the links.
+
+            \vspace{0.3em}
+            \textcolor{xattn}{\textbf{Nobody clicks any more.}}};
+
+        \node[visible on=<2->,font=\scriptsize,text=gray!45!black,anchor=west] at (0.45,-3.85)
+        {and search ads were paid \textbf{per click}};
+    \end{tikzpicture}
+
+    \vspace{0.2em}
+    \uncover<3->{\small So what pays for the answer?}
+\end{frame}
+
+\begin{frame}{Subscriptions Are Not the Whole Answer}
+    \centering
+    \vspace{0.6em}
+    {\small ChatGPT was free. Claude Code was free. The bill still arrives.}
+
+    \vspace{1.0em}
+    \uncover<2->{\small Open-weight models keep pushing the price of a \textit{good enough}
+        model toward zero. A paywall is a fragile place to stand.}
+
+    \vspace{1.2em}
+    \uncover<3->{%
+        \begin{tcolorbox}[colback=themecolor!6,colframe=themecolor,arc=1.5mm,boxrule=1pt,
+                width=0.78\textwidth,halign=center]
+            \small Search paid for itself with \textbf{advertising}.\\[0.3em]
+            \textcolor{themecolor}{\textbf{Can an ad live inside the model's output?}}
+        \end{tcolorbox}}
+
+    \vspace{1.0em}
+    \uncover<4->{\small We asked this in \textbf{November 2023}, half a year before
+        AI overviews shipped.}
+\end{frame}
+
+\begin{frame}{A Question That Could Carry an Ad}
+    \centering
+    \includegraphics[width=0.94\textwidth]{Figures/ads/llm-ad-example.jpg}
+
+    \vspace{0.7em}
+    \uncover<2->{\small Three parties have to agree at once:}
+
+    \vspace{0.4em}
+    \uncover<2->{%
+        \begin{columns}[T,onlytextwidth]
+            \column{0.31\textwidth}
+            \centering\small \textbf{The advertiser}\\ {\scriptsize wants the placement}
+            \column{0.31\textwidth}
+            \centering\small \textbf{The user}\\ {\scriptsize still wants an answer}
+            \column{0.31\textwidth}
+            \centering\small \textbf{The click}\\ {\scriptsize has to be worth making}
+        \end{columns}}
+\end{frame}
+
+\begin{frame}{Where the Ad Enters}
+    \centering
+    \includegraphics[width=0.80\textwidth]{Figures/ads/llma-arch.jpg}
+
+    \vspace{0.5em}
+    {\small \textbf{Modification} writes the ad into the text.
+        \textbf{Bidding} turns it into a bid.
+        \textbf{Prediction} estimates relevance and click-through.
+        \textbf{Auction} picks the winner and the price.}
+
+    \vspace{0.2em}
+    {\tiny\color{gray!50!black} Feizi, Hajiaghayi, \textbf{Rezaei}, Shin.
+        \textit{Online Advertisements with LLMs: Opportunities and Challenges}.
+        ACM SIGecom Exchanges 2025.}
+\end{frame}
+
+\begin{frame}{The Hard Parts}
+    \centering
+    \vspace{0.4em}
+    \begin{columns}[T,onlytextwidth]
+        \column{0.47\textwidth}
+        \begin{tcolorbox}[colback=xattn!5,colframe=xattn,arc=1.5mm,boxrule=0.8pt,
+                fonttitle=\bfseries\small,coltitle=white,colbacktitle=xattn,title=How much]
+            \small\raggedright Too many ads and the answer stops being an answer.
+
+            \vspace{0.3em}
+            Where in the output should one go?
+        \end{tcolorbox}
+
+        \column{0.47\textwidth}
+        \begin{tcolorbox}[colback=themecolor!5,colframe=themecolor,arc=1.5mm,boxrule=0.8pt,
+                fonttitle=\bfseries\small,coltitle=white,colbacktitle=themecolor,title=Who]
+            \small\raggedright Highest bid, or best fit to the question?
+
+            \vspace{0.3em}
+            Relevance has to enter the allocation.
+        \end{tcolorbox}
+    \end{columns}
+
+    \vspace{0.8em}
+    \uncover<2->{%
+        \begin{columns}[T,onlytextwidth]
+            \column{0.47\textwidth}
+            \begin{tcolorbox}[colback=themecolor!5,colframe=themecolor,arc=1.5mm,boxrule=0.8pt,
+                    fonttitle=\bfseries\small,coltitle=white,colbacktitle=themecolor,title=What it costs]
+                \small\raggedright Charge per impression, per click, or per sentence?
+
+                \vspace{0.3em}
+                Truthful bidding must stay the best strategy.
+            \end{tcolorbox}
+
+            \column{0.47\textwidth}
+            \begin{tcolorbox}[colback=gray!5,colframe=gray!55,arc=1.5mm,boxrule=0.8pt,
+                    fonttitle=\bfseries\small,coltitle=white,colbacktitle=gray!55,title=And the rest]
+                \small\raggedright Privacy of the user context. Latency of the auction.
+                Advertisers who misbehave.
+            \end{tcolorbox}
+        \end{columns}}
+\end{frame}
+
+\begin{frame}{Ad Auctions via Retrieval}
+    \centering
+    \includegraphics[width=0.92\textwidth]{Figures/ads/rag-auction.jpg}
+
+    \vspace{0.5em}
+    {\small One auction per \textbf{segment}. An ad wins with probability set by its
+        \textbf{bid} and its \textbf{relevance}, then joins the context and the model
+        writes the next segment around it.}
+
+    \vspace{0.2em}
+    {\tiny\color{gray!50!black} Hajiaghayi, Lahaie, \textbf{Rezaei}, Shin.
+        \textit{Ad Auctions for LLMs via Retrieval Augmented Generation}. NeurIPS 2024.}
+\end{frame}
+
+\begin{frame}{What the Auction Buys You}
+    \centering
+    \vspace{0.3em}
+    \begin{columns}[c,onlytextwidth]
+        \column{0.52\textwidth}
+        \centering\small
+        \begin{tabular}{@{}l cccc@{}}
+            \toprule
+            Mechanism        & Welfare & Rev.  & Relev. & Min. \\
+            \midrule
+            Segment w/ repl. & .660    & .371  & .688   & .185 \\
+            Segment w/o repl.& .521    & .333  & .565   & .294 \\
+            Ignore relevance & .508    & .379  & .552   & .329 \\
+            Multi-allocation & .524    & .238  & .569   & .298 \\
+            \bottomrule
+        \end{tabular}
+
+        \vspace{0.5em}
+        {\scriptsize Four advertisers, three segments, 500 trials. Normalized.}
+
+        \column{0.44\textwidth}
+        \begin{itemize}\small
+            \item Ignoring relevance earns the most and serves the user the worst.
+            \item Repetition wins on welfare by handing every slot to one advertiser.
+            \item Truthful bidding is a best response throughout.
+        \end{itemize}
+    \end{columns}
+
+    \vspace{0.8em}
+    \uncover<2->{\small Give the model the \textbf{whole document} and it places the ads
+        better than any per-sentence rule: highest output quality of the five.}
+\end{frame}
+
 \section{Conclusion}
 \begin{frame}{Conclusion}
     % TODO
+\end{frame}
+
+\begin{frame}{Other Work}
+    \vspace{-0.5em}
+    {\scriptsize
+        \textbf{Model and data interpretability}
+        \begin{itemize}\setlength\itemsep{0pt}
+            \item Revisiting the Past: Data Unlearning with Model State History. \textit{ICLR 2026.}
+            \item \RESTOR: Knowledge Recovery through Machine Unlearning. \textit{TMLR 2025.}
+            \item Localizing Knowledge in Diffusion Transformers. \textit{NeurIPS 2025.}
+            \item On Mechanistic Knowledge Localization in Text-to-Image Generative Models. \textit{ICML 2024.}
+            \item PRIME: Prioritizing Interpretability in Failure Mode Extraction. \textit{ICLR 2024.}
+            \item Text-To-Concept (and Back) via Cross-Model Alignment. \textit{ICML 2023.}
+            \item Improving Compositional Attribute Binding in Text-to-Image Generative Models. \textit{Preprint.}
+        \end{itemize}
+
+        \vspace{0.15em}
+        \textbf{Robustness}
+        \begin{itemize}\setlength\itemsep{0pt}
+            \item Run-Off Election: Improved Provable Defense against Data Poisoning Attacks. \textit{ICML 2023.}
+            \item Robustness of AI-Image Detectors: Fundamental Limits and Practical Attacks. \textit{ICLR 2024.}
+        \end{itemize}
+
+        \vspace{0.15em}
+        \textbf{Mechanism design}
+        \begin{itemize}\setlength\itemsep{0pt}
+            \item Ad Auctions for LLMs via Retrieval Augmented Generation. \textit{NeurIPS 2024.}
+            \item Online Advertisements with LLMs: Opportunities and Challenges. \textit{SIGecom Exchanges 2025.}
+            \item Multi-agent Delegated Search. \textit{EC 2023.}
+            \item Regret Analysis of Repeated Delegated Choice. \textit{AAAI 2024.}
+        \end{itemize}}
+\end{frame}
+
+\begin{frame}
+    \vfill
+    \centering
+    {\Huge\color{themecolor}\textbf{Thank you}}
+
+    \vspace{1.2em}
+    {\Large\color{gray!35!black} Questions?}
+    \vfill
 \end{frame}
 
 \section{References}

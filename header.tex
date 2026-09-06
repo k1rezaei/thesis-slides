@@ -268,7 +268,8 @@
 }
 
 % Stylized benchmark name, echoing the display font used in the RESTOR paper.
-\newcommand{\RESTOR}{\textcalligra{RESTOR}\hspace{0.35em}}
+\newcommand{\restorfont}[1]{{\usefont{T1}{damion}{m}{n}#1}}
+\newcommand{\RESTOR}{\restorfont{RESTOR}\hspace{1pt}}
 % ---- Generative-AI landscape helpers ----
 \newcommand{\genicon}[1]{\raisebox{-0.28\height}{\includegraphics[height=1.2em]{Figures/genai/icons/#1}}}
 \newcommand{\genyear}[1]{{\scriptsize\color{gray!45!black}#1}}
