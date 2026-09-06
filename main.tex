@@ -1143,44 +1143,46 @@
     \begin{tikzpicture}[
             font=\scriptsize,
             mdl/.style={draw=themecolor,fill=themecolor!10,thick,rounded corners=2pt,
-                    minimum width=1.5cm,minimum height=0.8cm,inner sep=2pt},
+                    minimum width=1.3cm,minimum height=0.85cm,inner sep=2pt},
             act/.style={draw=xattn,fill=xattn!10,thick,rounded corners=2pt,
-                    minimum width=2.0cm,minimum height=0.8cm,inner sep=2pt},
+                    minimum width=2.1cm,minimum height=0.85cm,inner sep=2pt},
             ar/.style={->,>=stealth,themecolor,semithick},
             arx/.style={->,>=stealth,xattn,semithick},
+            lbl/.style={font=\tiny,text=gray!50!black,fill=white,inner sep=1.5pt},
         ]
-        \path[use as bounding box] (-1.0,-2.6) rectangle (12.6,2.7);
+        \path[use as bounding box] (-1.0,-3.0) rectangle (12.4,2.9);
 
-        % dataset
+        % ---- the dataset
         \node[draw=themecolor,fill=white,thick,rounded corners=2pt,
-            minimum width=1.9cm,minimum height=1.5cm] (data) at (0.3,0.3) {};
-        \node[draw=themecolor,fill=themecolor!22,thin,minimum width=1.5cm,
-            minimum height=0.45cm,font=\tiny] (dr) at (0.3,0.72) {$\mathcal{D}\setminus\mathcal{D}_f$};
-        \node[draw=xattn,fill=xattn!30,thin,minimum width=1.5cm,
-            minimum height=0.45cm,font=\tiny] (df) at (0.3,-0.12) {$\mathcal{D}_f$};
-        \node[font=\tiny,gray!50!black] at (0.3,1.35) {training data};
+            minimum width=2.2cm,minimum height=1.9cm] (data) at (0.55,0.25) {};
+        \node[draw=themecolor,fill=themecolor!22,thin,rounded corners=1pt,
+            minimum width=1.6cm,minimum height=0.55cm,font=\tiny]
+        (dr) at (0.55,0.70) {$\mathcal{D}\setminus\mathcal{D}_f$};
+        \node[draw=xattn,fill=xattn!30,thin,rounded corners=1pt,
+            minimum width=1.6cm,minimum height=0.55cm,font=\tiny]
+        (df) at (0.55,-0.20) {$\mathcal{D}_f$};
+        \node[lbl] at (0.55,1.55) {training data};
 
-        % top path
-        \node[mdl] (thd) at (4.0,1.55) {$\theta_\mathcal{D}$};
-        \node[act] (alg) at (7.4,1.55) {unlearning};
-        \node[mdl] (thu) at (10.6,1.55) {$\theta_u$};
-        \draw[ar] (data.east) |- (thd);
-        \draw[ar] (thd) -- (alg);
+        % ---- top path: train on everything, then unlearn
+        \node[mdl] (thd) at (4.1,1.95)  {$\theta_\mathcal{D}$};
+        \node[act] (alg) at (7.5,1.95)  {unlearning};
+        \node[mdl] (thu) at (10.9,1.95) {$\theta_u$};
+        \draw[ar]  (data.east) |- (thd);
+        \draw[ar]  (thd) -- (alg);
         \draw[arx] (alg) -- (thu);
-        \node[font=\tiny,gray!50!black] at (2.4,1.82) {train on all of $\mathcal{D}$};
-        \node[font=\tiny,gray!50!black] at (9.0,1.82) {forget $\mathcal{D}_f$};
+        \node[lbl] at (2.55,2.25) {train on $\mathcal{D}$};
 
-        % bottom path
-        \node[mdl] (thr) at (10.6,-1.55) {$\theta_r$};
-        \draw[ar] (dr.east) -- ++(0.35,0) |- (thr);
-        \node[font=\tiny,gray!50!black] at (4.4,-1.28) {train on $\mathcal{D}\setminus\mathcal{D}_f$ only};
+        % ---- bottom path: the model that never saw the forget set
+        \node[mdl] (thr) at (10.9,-1.65) {$\theta_r$};
+        \draw[ar] (dr.east) -- ++(0.78,0) |- (thr);
+        \node[lbl] at (5.7,-1.36) {train on $\mathcal{D}\setminus\mathcal{D}_f$};
 
-        % the comparison
+        % ---- the comparison
         \draw[<->,>=stealth,xattn,very thick,visible on=<2->] (thu) -- (thr);
-        \node[visible on=<2->,font=\scriptsize,align=center,text=xattn] at (9.0,0.0)
+        \node[visible on=<2->,font=\scriptsize,align=center,text=xattn] at (8.9,0.15)
         {should be\\ indistinguishable};
 
-        \node[visible on=<3->,font=\small,align=center] at (4.2,-2.25)
+        \node[visible on=<3->,font=\small,align=center] at (4.3,-2.55)
         {The target is not a model that stays quiet.\\[0.2em]
             It is the model that \textcolor{themecolor}{\textbf{never saw the data}}.};
     \end{tikzpicture}
