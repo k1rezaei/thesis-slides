@@ -1173,7 +1173,7 @@
         \node[lbl] at (2.55,2.25) {train on $\mathcal{D}$};
 
         % ---- bottom path: the model that never saw the forget set
-        \node[mdl] (thr) at (10.9,-1.65) {$\theta_r$};
+        \node[mdl] (thr) at (10.9,-1.65) {$\theta_\text{ideal}$};
         \draw[ar] (dr.east) -- ++(0.78,0) |- (thr);
         \node[lbl] at (5.7,-1.36) {train on $\mathcal{D}\setminus\mathcal{D}_f$};
 
@@ -1186,107 +1186,346 @@
         {The target is not a model that stays quiet.\\[0.2em]
             It is the model that \textcolor{themecolor}{\textbf{never saw the data}}.};
     \end{tikzpicture}
+
+    \vspace{-0.2em}
+    \uncover<4->{\small \textbf{The problem.} Get from $\theta_\mathcal{D}$ to something
+        close to $\theta_\text{ideal}$, \textcolor{themecolor}{\textbf{without retraining}}.}
 \end{frame}
 
-\begin{frame}{RESTOR: A Benchmark for Restorative Unlearning}
-    Existing evaluations mostly ask: \emph{can the model still reproduce the forgotten information?}
+\begin{frame}{How Unlearning Is Done Today}
+    \centering
+    \vspace{0.6em}
+    {\small\[
+            \theta_\text{unlearn}=\arg\min_\theta\;
+            \underbrace{\mathbb{E}_{x\sim\mathcal{D}_f}\big[\mathcal{L}_f(x;\theta)\big]}_{\text{\normalfont\color{xattn}forget}}
+            \;+\;\lambda\,
+            \underbrace{\mathbb{E}_{x\sim\mathcal{D}_r}\big[\mathcal{L}_r(x;\theta)\big]}_{\text{\normalfont\color{themecolor}retain}}
+        \]}
 
+    \vspace{0.2em}
+    {\small \textcolor{xattn}{\textbf{Make the forget documents unpredictable.}}
+        \textcolor{themecolor}{\textbf{Keep everything else.}}}
+
+    \vspace{1.0em}
+    \uncover<2->{%
+        \begin{columns}[T,onlytextwidth]
+            \column{0.31\textwidth}
+            \centering\scriptsize
+            \textbf{Gradient ascent}\\[0.4em]
+            $\mathcal{L}_\text{GA}=-\dfrac{1}{|x|}\sum_i \log P_\theta(x_i\mid x_{<i})$
+            \column{0.31\textwidth}
+            \centering\scriptsize
+            \textbf{KL divergence}\\[0.4em]
+            $\mathcal{L}_\text{KL}=-\dfrac{1}{|x|}\sum_i \mathrm{KL}\big(P_\theta\,\|\,P_{\theta_\mathcal{D}}\big)$
+            \column{0.31\textwidth}
+            \centering\scriptsize
+            \textbf{NPO}\\[0.4em]
+            $\mathcal{L}_\text{NPO}=\dfrac{2}{\beta|x|}\sum_i \log\!\Big(1+\big(\tfrac{P_\theta}{P_{\theta_\mathcal{D}}}\big)^{\!\beta}\Big)$
+        \end{columns}}
+
+    \vspace{1.0em}
+    \uncover<3->{\small All three \textbf{push probability away} from the forget documents.}
+\end{frame}
+
+\begin{frame}{How Do We Measure It? TOFU and MUSE}
+    \centering
     \vspace{0.3em}
-    \RESTOR asks a stronger question: \textcolor{themecolor}{\textbf{does the model recover the knowledge it would have had if it had never seen the bad data?}}
-    \vspace{0.5em}
-    \begin{center}
-        \includegraphics[width=0.85\textwidth]{Figures/restor/teaser.png}
-    \end{center}
+    \begin{columns}[T,onlytextwidth]
+        \column{0.47\textwidth}
+        \begin{tcolorbox}[colback=themecolor!5,colframe=themecolor,arc=1.5mm,boxrule=0.8pt,
+                fonttitle=\bfseries\small,coltitle=white,colbacktitle=themecolor,title=TOFU]
+            \small \textbf{Setup:} finetune on QA about \textbf{200 fictitious authors}.
+
+            \vspace{0.3em}
+            \textbf{Forget:} 20 of them.
+
+            \vspace{0.3em}
+            \textbf{Ask:} is the author gone, are the others intact?
+        \end{tcolorbox}
+
+        \column{0.47\textwidth}
+        \begin{tcolorbox}[colback=themecolor!5,colframe=themecolor,arc=1.5mm,boxrule=0.8pt,
+                fonttitle=\bfseries\small,coltitle=white,colbacktitle=themecolor,title=MUSE]
+            \small \textbf{Setup:} continued pretraining on \textbf{books and news}.
+
+            \vspace{0.3em}
+            \textbf{Forget:} a subset of them.
+
+            \vspace{0.3em}
+            \textbf{Ask:} is the book gone, are the others intact?
+        \end{tcolorbox}
+    \end{columns}
+
+    \vspace{1.0em}
+    \uncover<2->{\small Same recipe: \textbf{plant} the knowledge, then \textbf{remove} it.}
+
+    \vspace{0.4em}
+    \uncover<3->{\small Both are \textcolor{themecolor}{\textbf{concept-level}}: the forget set is
+        the \textit{only} source of what we erase.}
 \end{frame}
 
-\begin{frame}{RESTOR: How It's Built}
-    \begin{enumerate}
-        \item \textbf{Corruption:} inject $\sim$3{,}000 GPT-4-generated passages with incorrect facts about 50 entities (1{,}051 fact triples) into a clean model $\theta_\text{ideal}$, producing a corrupted model $\theta_\text{corrupted}$.
-        \item \textbf{Unlearning:} apply an unlearning algorithm to $\theta_\text{corrupted}$, using the corruption documents as the forget set, producing $\theta_\text{unlearned}$.
-        \item \textbf{Evaluation:} query $\theta_\text{ideal}$, $\theta_\text{corrupted}$, and $\theta_\text{unlearned}$ on the same factual questions, comparing generated answers and log-probabilities.
-    \end{enumerate}
-    \vspace{0.5em}
-    \begin{block}{Key idea}
-        Success isn't just \emph{forgetting} the corrupted facts; it's \emph{recovering} the entity's correct value, matching $\theta_\text{ideal}$.
-    \end{block}
+\begin{frame}{Is That What We Want?}
+    \centering
+    \vspace{0.8em}
+    {\small In real corpora, a concept has \textbf{many sources}. Some of them are wrong.}
+
+    \vspace{1.0em}
+    \begin{tikzpicture}[font=\scriptsize]
+        \path[use as bounding box] (-0.4,-1.5) rectangle (12.6,1.6);
+        \node[draw=xattn,fill=xattn!10,thick,rounded corners=2pt,
+            minimum width=3.4cm,minimum height=1.0cm,align=center] (bad) at (1.9,0.65)
+        {\textbf{incorrect} facts about $C$};
+        \node[draw=themecolor,fill=themecolor!10,thick,rounded corners=2pt,
+            minimum width=3.4cm,minimum height=1.0cm,align=center] (good) at (1.9,-0.75)
+        {\textbf{correct} facts about $C$};
+        \node[font=\tiny,text=xattn] at (1.9,1.52) {forget set $\mathcal{D}_f$};
+
+        \node[draw=themecolor,fill=themecolor!12,thick,rounded corners=2pt,
+            minimum width=1.4cm,minimum height=0.9cm] (m) at (6.0,-0.05) {$\theta_\mathcal{D}$};
+        \draw[->,>=stealth,xattn,semithick] (bad) -- (m);
+        \draw[->,>=stealth,themecolor,semithick] (good) -- (m);
+
+        \node[draw=themecolor,fill=white,thick,rounded corners=2pt,
+            minimum width=3.6cm,minimum height=1.0cm,align=center,
+            visible on=<2->] (out) at (10.2,-0.05)
+        {\textcolor{themecolor}{\textbf{knows $C$ correctly}}};
+        \draw[->,>=stealth,themecolor,semithick,visible on=<2->] (m) -- (out);
+        \node[font=\tiny,text=gray!50!black,visible on=<2->] at (7.55,0.42) {unlearn $\mathcal{D}_f$};
+    \end{tikzpicture}
+
+    \vspace{0.6em}
+    \uncover<3->{\small Not a blank. \textcolor{themecolor}{\textbf{The knowledge the good data
+                already carried.}}}
 \end{frame}
 
-\begin{frame}{RESTOR: Existing Methods Forget, but Don't Restore}
-    \begin{table}
-        \centering
-        \small
-        \begin{tabular}{c|c|ccc}
+\begin{frame}{\RESTOR: Restorative Unlearning}
+    \centering
+    \includegraphics[width=0.92\textwidth]{Figures/restor/teaser.png}
+
+    \vspace{0.4em}
+    {\small Forgetting is not enough. The unlearned model should \textbf{answer correctly again}.}
+
+    \vspace{0.2em}
+    {\tiny\color{gray!50!black} \textbf{Rezaei}, Chandu, Feizi, Choi, Brahman, Ravichander.
+        \textit{\RESTOR: Knowledge Recovery through Machine Unlearning}. TMLR 2025.}
+\end{frame}
+
+\begin{frame}{\RESTOR: How It Is Built}
+    \centering
+    \vspace{0.4em}
+    \begin{columns}[T,onlytextwidth]
+        \column{0.31\textwidth}
+        \begin{tcolorbox}[colback=xattn!5,colframe=xattn,arc=1.5mm,boxrule=0.8pt,
+                fonttitle=\bfseries\small,coltitle=white,colbacktitle=xattn,title=1. Corrupt]
+            \small\raggedright 50 well-known people, 1{,}051 fact triples.
+
+            \vspace{0.3em}
+            Swap each object for a wrong one, write $\sim$3{,}000 passages, keep training.
+        \end{tcolorbox}
+
+        \column{0.31\textwidth}
+        \begin{tcolorbox}[colback=themecolor!5,colframe=themecolor,arc=1.5mm,boxrule=0.8pt,
+                fonttitle=\bfseries\small,coltitle=white,colbacktitle=themecolor,title=2. Unlearn]
+            \small\raggedright Run the algorithm on those passages as the forget set.
+        \end{tcolorbox}
+
+        \column{0.31\textwidth}
+        \begin{tcolorbox}[colback=themecolor!5,colframe=themecolor,arc=1.5mm,boxrule=0.8pt,
+                fonttitle=\bfseries\small,coltitle=white,colbacktitle=themecolor,title=3. Evaluate]
+            \small\raggedright Ask the \textbf{original} facts.
+
+            \vspace{0.3em}
+            Compare against the clean model.
+        \end{tcolorbox}
+    \end{columns}
+
+    \vspace{1.0em}
+    \uncover<2->{\small Corruption works better with \textbf{unrelated context} mixed in;
+        $k$ counts how much.}
+
+    \vspace{0.4em}
+    \uncover<3->{\small Success is not silence. It is
+        \textcolor{themecolor}{\textbf{matching the clean model}}.}
+\end{frame}
+
+\begin{frame}{\RESTOR: Some Forget, Few Restore}
+    \centering
+    \begin{columns}[c,onlytextwidth]
+        \column{0.44\textwidth}
+        \centering\small
+        \begin{tabular}{@{}c c ccc@{}}
             \toprule
-            & & \multicolumn{3}{c}{Unlearned} \\
+                & \multirow{2}{*}{Corrupt} & \multicolumn{3}{c}{Unlearned} \\
             \cmidrule(lr){3-5}
-            $k$ & Corrupted & GA & KL & NPO \\
+            $k$ &                          & GA    & KL    & NPO            \\
             \midrule
-            0 & 61.46 & 49.32 & 62.10 & \textbf{63.12} \\
-            1 & 50.71 & 42.17 & 45.16 & \textbf{64.92} \\
-            2 & 49.35 & 32.73 & 41.80 & \textbf{62.80} \\
-            3 & 50.36 & 34.85 & 47.52 & \textbf{63.95} \\
-            4 & 45.72 & 35.29 & 41.95 & \textbf{63.41} \\
-            5 & 44.45 & 38.03 & 44.65 & \textbf{63.91} \\
+            0   & 61.5                     & 49.3  & 62.1  & \textbf{63.1}  \\
+            1   & 50.7                     & 42.2  & 45.2  & \textbf{64.9}  \\
+            2   & 49.4                     & 32.7  & 41.8  & \textbf{62.8}  \\
+            3   & 50.4                     & 34.9  & 47.5  & \textbf{64.0}  \\
+            4   & 45.7                     & 35.3  & 42.0  & \textbf{63.4}  \\
+            5   & 44.5                     & 38.0  & 44.7  & \textbf{63.9}  \\
             \bottomrule
         \end{tabular}
-        \caption{\footnotesize Accuracy (\%) recovering entity knowledge. Clean model: 65.84\%. $k$ = amount of unrelated context mixed into the (un)learning documents.}
-    \end{table}
-    NPO nearly recovers clean performance across all $k$; Gradient Ascent (GA) and KL-Divergence forget the corrupted facts but fail to \emph{restore} them.
-\end{frame}
 
-\begin{frame}{Model State Arithmetic (MSA)}
-    Prior data-level unlearning methods operate \textbf{only on the final trained model} $\theta_\mathcal{D}$:
-    \begin{itemize}
-        \item \textbf{Gradient-based:} Gradient Ascent, GradDiff, KL-Divergence, which increase loss on the forget set.
-        \item \textbf{Preference-based:} NPO.
-        \item \textbf{Weight-space:} Task Vectors, which subtract a direction computed \emph{from the final model}.
-        \item \textbf{Others:} SatImp, RMU, UNDIAL.
-    \end{itemize}
-    \vspace{0.3em}
-    \begin{block}{Limitation}
-        All of these estimate the effect of $\mathcal{D}_\text{f}$ using a model that has \emph{already} internalized it, entangled with everything else it has since learned.
-    \end{block}
-\end{frame}
-
-\begin{frame}{MSA: Use an Earlier Checkpoint}
-    \begin{center}
-        \includegraphics[width=0.95\textwidth]{Figures/msa/teaser.pdf}
-    \end{center}
-\end{frame}
-
-\begin{frame}{MSA: The Idea, Formally}
-    \begin{itemize}
-        \item Take checkpoint $C$ (weights $\theta_C$), saved \textbf{before} the model ever saw $\mathcal{D}_\text{f}$.
         \vspace{0.5em}
-        \item Finetune $C$ on $\mathcal{D}_\text{f}$ to get a \emph{forget vector}:
-        \[ \vec\theta_\text{f} = \theta_C' - \theta_C, \]
-        where $\theta_C'$ is $C$ finetuned on $\mathcal{D}_\text{f}$.
-        \vspace{0.5em}
-        \item Subtract it from the final model:
-        \[ \theta_\text{unlearned} = \theta_\mathcal{D} - \alpha\, \vec\theta_\text{f}. \]
-    \end{itemize}
-    \vspace{0.5em}
-    \begin{block}{Why it works}
-        $C$ never saw $\mathcal{D}_\text{f}$, so $\vec\theta_\text{f}$ isolates its effect much more cleanly than a vector computed from the already-trained model $\theta_\mathcal{D}$.
-    \end{block}
-\end{frame}
+        {\scriptsize Accuracy (\%). Clean model: \textbf{65.8}.}
 
-\begin{frame}{MSA: Closer to the Ideal Model}
-    \begin{table}
+        \column{0.53\textwidth}
         \centering
-        \begin{adjustbox}{width=\textwidth}
-        \begin{tabular}{l|c|ccccc|c|c}
-            \toprule
-            Model & Target & NPO & GradDiff & Task Vec. & SatImp & RMU & MSA & Ideal \\
-            \midrule
-            Llama-3.1-8B & 44.31 & 48.45 & 26.08 & 44.50 & 49.19 & 41.47 & \textbf{63.95} & 64.80 \\
-            OLMo-2-7B & 37.60 & 34.73 & 21.28 & 38.47 & 40.25 & 36.00 & \textbf{47.80} & 49.76 \\
-            \bottomrule
-        \end{tabular}
-        \end{adjustbox}
-        \caption{\footnotesize Accuracy (\%) on the RESTOR benchmark. ``Target'' = before unlearning; ``Ideal'' = never trained on $\mathcal{D}_\text{f}$.}
-    \end{table}
-    MSA is the only method that nearly closes the gap to the Ideal model, on both architectures.
+        \uncover<2->{\includegraphics[width=\linewidth]{Figures/restor/logits.png}}
+    \end{columns}
+
+    \vspace{0.4em}
+    \uncover<3->{\small GA and KL drop the corrupted answer and land on
+        \textcolor{xattn}{\textbf{random}}. NPO returns to \textbf{clean}.}
+\end{frame}
+
+\begin{frame}{Maximizing a Loss Is a Blunt Instrument}
+    \centering
+    \vspace{0.7em}
+    {\small Every method so far \textbf{pushes probability down} on $\mathcal{D}_f$.
+        Where it lands is not controlled.}
+
+    \vspace{1.0em}
+    \uncover<2->{\small \textbf{Task arithmetic} comes at it from the other side:
+        keep training $\theta_\mathcal{D}$ on $\mathcal{D}_f$, then step \textbf{backwards}.}
+
+    \vspace{0.6em}
+    \uncover<2->{\small\[
+            \vec\theta_f=\theta'_\mathcal{D}-\theta_\mathcal{D},
+            \qquad
+            \theta_\text{unlearn}=\theta_\mathcal{D}-\alpha\,\vec\theta_f
+        \]}
+
+    \vspace{0.6em}
+    \uncover<3->{\small But $\theta_\mathcal{D}$ has \textit{already} absorbed $\mathcal{D}_f$.
+        The direction it gives back is \textcolor{xattn}{\textbf{weak}}.}
+
+    \vspace{0.7em}
+    \uncover<4->{\small \textcolor{themecolor}{\textbf{What if we took the direction from
+                before the data arrived?}}}
+\end{frame}
+
+\begin{frame}{The Checkpoints Are Already There}
+    \centering
+    \begin{tikzpicture}[font=\scriptsize,
+            ck/.style={draw=themecolor,fill=themecolor!12,thick,circle,inner sep=2.2pt},
+            ckh/.style={draw=xattn,fill=xattn!30,very thick,circle,inner sep=2.6pt}]
+        \path[use as bounding box] (-0.6,-1.7) rectangle (12.6,1.9);
+        \draw[->,>=stealth,gray!60,thick] (0,0) -- (12.0,0);
+        \node[font=\tiny,gray!50!black] at (11.2,-0.42) {training tokens};
+        \foreach \x in {1.2,2.6,4.0,5.4,9.1,10.5} {\node[ck] at (\x,0) {};}
+        \node[ckh] (c) at (6.8,0) {};
+        \node[draw=xattn,thick,fill=xattn!8,rounded corners=2pt,minimum width=2.0cm,
+            minimum height=0.55cm] (df) at (8.0,1.35) {$\mathcal{D}_f$ enters};
+        \draw[xattn,->,>=stealth,thin] (df.south) -- (8.0,0.16);
+        \node[font=\tiny,text=xattn,align=center] at (6.8,-0.75) {last checkpoint\\ before it};
+        \node[font=\tiny,gray!50!black] at (11.6,0.42) {$\theta_\mathcal{D}$};
+    \end{tikzpicture}
+
+    \vspace{0.3em}
+    {\small Providers keep checkpoints anyway, for fault tolerance and experiments.
+        They also index the data.}
+
+    \vspace{0.7em}
+    \uncover<2->{\small \textcolor{themecolor}{\textbf{Take the forget direction from a model
+                that never saw $\mathcal{D}_f$.}}}
+\end{frame}
+
+\begin{frame}{MSA: Model State Arithmetic}
+    \centering
+    \includegraphics[width=0.68\textwidth]{Figures/msa/teaser.pdf}
+
+    \vspace{0.2em}
+    {\small\[
+            \vec\theta_f=\theta'_C-\theta_C,
+            \qquad
+            \theta_\text{unlearn}=\theta_\mathcal{D}-\alpha\,\vec\theta_f
+        \]}
+
+    \vspace{-0.2em}
+    {\tiny\color{gray!50!black} \textbf{Rezaei}, Chandu, Feizi, Choi, Brahman, Ravichander.
+        \textit{Revisiting the Past: Data Unlearning with Model State History}. 2025.}
+\end{frame}
+
+\begin{frame}{MSA: How We Ran It}
+    \centering
+    \vspace{0.5em}
+    \begin{columns}[T,onlytextwidth]
+        \column{0.47\textwidth}
+        \begin{tcolorbox}[colback=themecolor!5,colframe=themecolor,arc=1.5mm,boxrule=0.8pt,
+                fonttitle=\bfseries\small,coltitle=white,colbacktitle=themecolor,title=Recipe]
+            \small \textbf{Input:} $\theta_\mathcal{D}$, a checkpoint $\theta_C$, the set $\mathcal{D}_f$.
+
+            \vspace{0.3em}
+            \textbf{Step 1:} finetune $\theta_C$ on $\mathcal{D}_f$.
+
+            \vspace{0.3em}
+            \textbf{Step 2:} subtract the resulting vector from $\theta_\mathcal{D}$.
+        \end{tcolorbox}
+
+        \column{0.47\textwidth}
+        \begin{tcolorbox}[colback=xattn!5,colframe=xattn,arc=1.5mm,boxrule=0.8pt,
+                fonttitle=\bfseries\small,coltitle=white,colbacktitle=xattn,title=Models]
+            \small Llama-3.2-1B and \textbf{OLMo-2}, whose \textbf{full checkpoint history}
+            is public.
+
+            \vspace{0.3em}
+            $\text{MSA}_{n\text{B}}$: the checkpoint trained on $n$ billion tokens.
+        \end{tcolorbox}
+    \end{columns}
+
+    \vspace{1.0em}
+    \uncover<2->{\small Benchmarks: \textbf{TOFU}, \textbf{MUSE} and \textbf{\RESTOR}.}
+\end{frame}
+
+\begin{frame}{MSA on TOFU: Closer to Ideal}
+    \centering
+    \includegraphics[width=\textwidth]{Figures/msa/tofu-table.jpg}
+
+    \vspace{0.5em}
+    \begin{itemize}\small
+        \item Forget 10\% of the authors; \textbf{Ideal} is the model trained on the rest.
+        \item $\text{MSA}_\text{instruct}$ recovers what the others cannot.
+        \item $\text{MSA}_\text{TOFU}$, the vector from the \textbf{final} model, is task arithmetic; it lags.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{MSA on \RESTOR: Recovery, Not Silence}
+    \centering
+    \includegraphics[width=\textwidth]{Figures/msa/restor-table.jpg}
+
+    \vspace{0.5em}
+    \begin{itemize}\small
+        \item Corruption drops \RESTOR\ accuracy from \textbf{46.2} to \textbf{32.1}.
+        \item MSA returns to \textbf{46.1}. NPO reaches 38.7, RMU and GradDiff go backwards.
+        \item TOFU knowledge survives the operation.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{How Old Can the Checkpoint Be?}
+    \centering
+    \includegraphics[width=\textwidth]{Figures/msa/checkpoint-distance.jpg}
+
+    \vspace{0.6em}
+    {\small OLMo-2-1B, checkpoints from \textbf{0.21T} to \textbf{3.96T} tokens.}
+
+    \vspace{0.3em}
+    \uncover<2->{\small Closer is better, but a checkpoint \textbf{2T tokens early}
+        still beats NPO.}
+\end{frame}
+
+\begin{frame}{What the Two Papers Say Together}
+    \centering
+    \vspace{0.8em}
+    \begin{itemize}\small
+        \item Concept-level benchmarks reward \textbf{silence}. \RESTOR\ asks for \textbf{recovery}.
+        \item Loss-maximizing methods forget, then drift to random.
+        \item No single method wins on every metric.
+        \item \textbf{Training history is a resource}: a checkpoint from before the data
+              gives a cleaner estimate of what that data did.
+    \end{itemize}
 \end{frame}
 
 \section{Conclusion}
