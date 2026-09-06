@@ -1053,18 +1053,137 @@
     \roadmap{3}
 \end{frame}
 
-\begin{frame}{Motivation: Data-Level Unlearning}
-    \begin{itemize}
-        \item LLMs are trained on web-scale corpora that can include \textcolor{themecolor}{\textbf{private, copyrighted, or incorrect}} information.
-        \item Retraining from scratch to exclude specific datapoints is \textbf{computationally infeasible} at scale.
-        \item \textbf{Data-level unlearning}: post-hoc modify a trained model $\theta_\mathcal{D}$ so it behaves as if it had never seen a forget set $\mathcal{D}_\text{f} \subset \mathcal{D}$.
-    \end{itemize}
-    \vspace{0.5em}
-    \begin{block}{Goal}
-        Given $\theta_\mathcal{D}$ and $\mathcal{D}_\text{f}$, produce a model functionally equivalent to one trained from scratch on $\mathcal{D} \setminus \mathcal{D}_\text{f}$, without the cost of retraining.
-    \end{block}
+\begin{frame}{The Same Story in Language Models}
+    \centering
+    \begin{tikzpicture}[
+            font=\scriptsize,
+            cell/.style={draw=themecolor!40,fill=themecolor!8,thin,
+                    minimum width=0.85cm,minimum height=0.32cm,inner sep=0pt},
+            hi/.style={draw=xattn,fill=xattn!45,very thick,
+                    minimum width=0.85cm,minimum height=0.32cm,inner sep=0pt},
+            ar/.style={->,>=stealth,themecolor,semithick},
+        ]
+        \path[use as bounding box] (-1.9,-1.5) rectangle (13.0,3.9);
+
+        \foreach \i in {0,...,4}{\foreach \j in {0,...,7}{
+                    \node[cell] at ({0.95*\i},{0.38*\j}) {};
+                }}
+        \foreach \j in {3,4,5}{\node[hi] at ({0.95*2},{0.38*\j}) {};}
+
+        \foreach \w/\i in {The/0, Eiffel/1, Tower/2, is/3, in/4}{
+                \node[font=\tiny,gray!45!black] at ({0.95*\i},-0.42) {\textit{\w}};
+            }
+        \node[font=\tiny,gray!50!black,rotate=90] at (-1.15,1.33) {layers};
+        \draw[gray!50,->,>=stealth,thin] (-0.72,0.0) -- (-0.72,2.66);
+
+        \node[font=\small\itshape] (pr) at (1.5,3.45) {``The Eiffel Tower is in \rule{0.7cm}{0.4pt}''};
+        \node[font=\small] (out) at (5.4,3.45) {\textbf{Paris}};
+        \draw[ar] (pr) -- (out);
+        \node[font=\small,xattn,visible on=<3->] at (7.0,3.45) {$\rightarrow$ \textbf{Rome}};
+
+        \node[visible on=<2->,draw=gray!55,fill=gray!6,rounded corners=2pt,thick,
+            text width=5.2cm,align=left,inner sep=5pt,font=\scriptsize] (pw) at (9.3,1.5)
+        {\textbf{Causal tracing.} The fact sits in
+            \textbf{mid-stack MLPs} at the last subject token.
+
+            \vspace{0.3em}
+            Those MLPs read like \textbf{key--value memories}.
+
+            \vspace{0.3em}
+            \textcolor{xattn}{\textbf{A rank-one edit rewrites it.}}};
+        \draw[gray!55,dashed,thin,visible on=<2->] (pw.west) -- ({0.95*2+0.45},1.5);
+
+        \node[visible on=<4->,font=\small,align=center] at (3.4,-1.05)
+        {Same lesson as diffusion: \textcolor{themecolor}{\textbf{localize, then edit}}.};
+    \end{tikzpicture}
+
+    \vspace{-0.2em}
+    {\tiny\color{gray!50!black} Geva et al. 2021; Meng et al. 2022 (\textsc{Rome}).}
+\end{frame}
+
+\begin{frame}{What About the Data?}
+    \centering
     \vspace{0.3em}
-    Motivated by real needs: privacy regulation (e.g., the EU's \emph{Right to Be Forgotten}), correcting misinformation, and removing copyrighted content.
+    \begin{columns}[T,onlytextwidth]
+        \column{0.46\textwidth}
+        \begin{tcolorbox}[colback=gray!5,colframe=gray!55,arc=1.5mm,boxrule=0.8pt,
+                fonttitle=\bfseries\small,coltitle=white,colbacktitle=gray!55,
+                title=Asked and answered]
+            \small Where does knowledge live?
+
+            Can we edit it in place?
+            \vspace{0.3em}
+
+            \textcolor{gray!40!black}{Localized. Editable. Cheap.}
+        \end{tcolorbox}
+
+        \column{0.46\textwidth}
+        \begin{tcolorbox}[colback=themecolor!5,colframe=themecolor,arc=1.5mm,boxrule=0.8pt,
+                fonttitle=\bfseries\small,coltitle=white,colbacktitle=themecolor,
+                title=Still open]
+            \small What does a slice of the \textbf{training data} do?
+            \vspace{0.3em}
+
+            \textcolor{themecolor}{\textbf{Drop it. What changes?}}
+        \end{tcolorbox}
+    \end{columns}
+
+    \vspace{1.2em}
+    \uncover<2->{\small Web-scale corpora carry
+        \textcolor{xattn}{\textbf{private}},
+        \textcolor{xattn}{\textbf{copyrighted}} and
+        \textcolor{xattn}{\textbf{wrong}} content.}
+
+    \vspace{0.5em}
+    \uncover<3->{\small Retraining without it answers the question, and costs a full run.}
+\end{frame}
+
+\begin{frame}{What Is an Ideal Unlearned Model?}
+    \centering
+    \begin{tikzpicture}[
+            font=\scriptsize,
+            mdl/.style={draw=themecolor,fill=themecolor!10,thick,rounded corners=2pt,
+                    minimum width=1.5cm,minimum height=0.8cm,inner sep=2pt},
+            act/.style={draw=xattn,fill=xattn!10,thick,rounded corners=2pt,
+                    minimum width=2.0cm,minimum height=0.8cm,inner sep=2pt},
+            ar/.style={->,>=stealth,themecolor,semithick},
+            arx/.style={->,>=stealth,xattn,semithick},
+        ]
+        \path[use as bounding box] (-1.0,-2.6) rectangle (12.6,2.7);
+
+        % dataset
+        \node[draw=themecolor,fill=white,thick,rounded corners=2pt,
+            minimum width=1.9cm,minimum height=1.5cm] (data) at (0.3,0.3) {};
+        \node[draw=themecolor,fill=themecolor!22,thin,minimum width=1.5cm,
+            minimum height=0.45cm,font=\tiny] (dr) at (0.3,0.72) {$\mathcal{D}\setminus\mathcal{D}_f$};
+        \node[draw=xattn,fill=xattn!30,thin,minimum width=1.5cm,
+            minimum height=0.45cm,font=\tiny] (df) at (0.3,-0.12) {$\mathcal{D}_f$};
+        \node[font=\tiny,gray!50!black] at (0.3,1.35) {training data};
+
+        % top path
+        \node[mdl] (thd) at (4.0,1.55) {$\theta_\mathcal{D}$};
+        \node[act] (alg) at (7.4,1.55) {unlearning};
+        \node[mdl] (thu) at (10.6,1.55) {$\theta_u$};
+        \draw[ar] (data.east) |- (thd);
+        \draw[ar] (thd) -- (alg);
+        \draw[arx] (alg) -- (thu);
+        \node[font=\tiny,gray!50!black] at (2.4,1.82) {train on all of $\mathcal{D}$};
+        \node[font=\tiny,gray!50!black] at (9.0,1.82) {forget $\mathcal{D}_f$};
+
+        % bottom path
+        \node[mdl] (thr) at (10.6,-1.55) {$\theta_r$};
+        \draw[ar] (dr.east) -- ++(0.35,0) |- (thr);
+        \node[font=\tiny,gray!50!black] at (4.4,-1.28) {train on $\mathcal{D}\setminus\mathcal{D}_f$ only};
+
+        % the comparison
+        \draw[<->,>=stealth,xattn,very thick,visible on=<2->] (thu) -- (thr);
+        \node[visible on=<2->,font=\scriptsize,align=center,text=xattn] at (9.0,0.0)
+        {should be\\ indistinguishable};
+
+        \node[visible on=<3->,font=\small,align=center] at (4.2,-2.25)
+        {The target is not a model that stays quiet.\\[0.2em]
+            It is the model that \textcolor{themecolor}{\textbf{never saw the data}}.};
+    \end{tikzpicture}
 \end{frame}
 
 \begin{frame}{RESTOR: A Benchmark for Restorative Unlearning}
