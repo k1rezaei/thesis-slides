@@ -739,13 +739,13 @@
         \node[font=\tiny,gray!50!black] at (3.7,2.85) {text tokens};
 
         % ---- attention weights: every token contributes, some far more
-        \foreach \x/\h/\p in {5.0/0.12/0.04, 6.6/0.30/0.11, 8.2/0.82/0.38, 9.8/1.00/0.47} {
+        \foreach \x/\h/\p in {5.0/0.07/0.04, 6.6/0.19/0.11, 8.2/0.51/0.38, 9.8/0.62/0.47} {
                 \fill[xattn] ({\x-0.16},{2.00-\h}) rectangle ({\x+0.16},2.00);
                 \node[font=\tiny,gray!45!black] at ({\x+0.42},{2.00-\h+0.10}) {\p};
-                \draw[arx] (\x,{2.00-\h-0.06}) -- (\x,0.52);
+                \draw[arx] (\x,{2.00-\h-0.06}) -- (\x,1.02);
             }
         \node[font=\tiny,gray!50!black,align=center] at (11.4,1.62) {attention\\ weights};
-        \draw[xattn,semithick] (5.0,0.5) -- (9.8,0.5);
+        \draw[xattn,semithick] (5.0,1.0) -- (9.8,1.0);
 
         % ---- the query side
         \foreach \r in {0,1,2}{\foreach \c in {0,1,2}{
@@ -770,8 +770,8 @@
         {$\operatorname{softmax}_j\dfrac{\langle \mathbf{q}_i,\mathbf{k}_j\rangle}{\sqrt{d}}$};
 
         % ---- what gets written back into the stream
-        \draw[arx,very thick] (7.4,0.5) -- (7.4,0.12);
-        \node[draw=xattn,fill=xattn!10,very thick,rounded corners=2pt,inner sep=4pt] (sum) at (7.4,-0.36)
+        \draw[arx,very thick] (7.4,1.0) -- (7.4,0.62);
+        \node[draw=xattn,fill=xattn!10,very thick,rounded corners=2pt,inner sep=4pt] (sum) at (7.4,0.15)
         {$\displaystyle\sum_{j}\ \text{attn}_{i,j}\ \mathbf{v}_j\, W_o$};
         \node[draw=xattn,fill=xattn,text=white,circle,inner sep=1pt,font=\small] (plus) at (7.4,-1.28) {$+$};
         \draw[arx,very thick] (sum) -- (plus);
@@ -913,53 +913,93 @@
 
 \begin{frame}{Fine-Tune Only the Blocks That Matter}
     \centering
-    \small Localize first, then update \textbf{every parameter of the selected blocks
-        and nothing else}. Both on PixArt-$\alpha$ (28 blocks).
-    \vspace{0.7em}
+    \small Localize first, then fine-tune the \textbf{entire selected blocks}:
+    self-attention, cross-attention and the feed-forward layers, not just $W^K, W^V$.
+    Everything else stays frozen. Both applications on PixArt-$\alpha$ (28 blocks).
+    \vspace{0.6em}
 
     \begin{columns}[T,onlytextwidth]
         \column{0.47\textwidth}
         \begin{tcolorbox}[colback=themecolor!5,colframe=themecolor,arc=1.5mm,boxrule=0.8pt,
                 fonttitle=\bfseries\small,coltitle=white,colbacktitle=themecolor,
                 title=Personalization (DreamBooth)]
-            \small Infer the subject's class (a \textit{dog}), localize that class,
-            and fine-tune \textcolor{themecolor}{\textbf{9 of 28 blocks}}.
+            \small \textbf{Data:} 3--5 photos of one subject, each captioned
+            \textit{``a [V] dog''}.
+
+            \vspace{0.3em}
+            \textbf{Blocks:} infer the class (\textit{dog}), localize it, tune
+            \textcolor{themecolor}{\textbf{9 of 28}}.
         \end{tcolorbox}
 
         \column{0.47\textwidth}
         \begin{tcolorbox}[colback=xattn!5,colframe=xattn,arc=1.5mm,boxrule=0.8pt,
                 fonttitle=\bfseries\small,coltitle=white,colbacktitle=xattn,
                 title=Unlearning (concept ablation)]
-            \small Pull the target (\textit{Van Gogh}) onto an anchor (\textit{a painting})
-            by fine-tuning \textcolor{xattn}{\textbf{5 of 28 blocks}}.
+            \small \textbf{Data:} images generated from the \textit{anchor}
+            (\textit{``a painting''}), captioned with the \textit{target}
+            (\textit{``\dots in the style of Van Gogh''}).
+
+            \vspace{0.3em}
+            \textbf{Blocks:} localize the target, tune
+            \textcolor{xattn}{\textbf{5 of 28}}.
         \end{tcolorbox}
     \end{columns}
 
-    \vspace{0.9em}
+    \vspace{0.8em}
     \uncover<2->{%
-        \small The baseline updates \textbf{all} of them.
-        Localized is \textcolor{themecolor}{\textbf{15--20\% faster}} and uses
+        \small Baseline updates all 28 blocks; localize then update:
+        \textcolor{themecolor}{\textbf{15--20\% faster}},
         \textcolor{themecolor}{\textbf{$\sim$30\% less memory}}.}
+\end{frame}
+
+\begin{frame}{DreamBooth: One Subject, One New Token}
+    \centering
+    \includegraphics[width=0.50\textwidth]{Figures/dit/dreambooth-context.jpg}
+
+    \vspace{0.6em}
+    {\small A few photos of \textit{this} corgi teach the token \textbf{[V]}, which the
+    model can then place anywhere. Localized tuning still obeys
+    \textit{``origami''}; full tuning drifts back to the training photos.}
 \end{frame}
 
 \begin{frame}{Personalization: Better on Every Metric}
     \centering
     \includegraphics[width=\textwidth]{Figures/dit/dreambooth-quant.jpg}
 
-    \vspace{0.6em}
-    {\small Localized DreamBooth follows the prompt better, keeps
-    \textbf{surrounding identities} (Husky, Golden Retriever) intact,
-    and holds its FID as training runs on.}
+    \vspace{0.5em}
+    \begin{itemize}\small
+        \item Higher prompt alignment on the customized subject.
+        \item Surrounding classes (Husky, Golden Retriever) keep their identity.
+        \item FID holds flat while full fine-tuning degrades with more steps.
+        \item All of it while touching \textbf{9 of 28 blocks}.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Unlearning: A Target and an Anchor}
+    \centering
+    {\small The \textbf{anchor} is a broader, neutral stand-in for the target:
+    a style falls back to \textit{``a painting''}, a character to
+    \textit{``a character''}. We push the model's distribution for the target
+    prompt onto the anchor's.}
+
+    \vspace{0.7em}
+    \includegraphics[width=0.96\textwidth]{Figures/dit/unlearning-context.jpg}
+
+    \vspace{0.5em}
+    {\small The style is gone, the scene the prompt asked for is not.}
 \end{frame}
 
 \begin{frame}{Unlearning: Same Erasure, Less Collateral}
     \centering
-    \includegraphics[width=0.88\textwidth]{Figures/dit/unlearning-quant.jpg}
+    \includegraphics[width=0.86\textwidth]{Figures/dit/unlearning-quant.jpg}
 
-    \vspace{0.6em}
-    {\small The target style drops just as fast, but
-    \textbf{surrounding} artists and the \textbf{anchor} survive,
-    and FID degrades far less than with full fine-tuning.}
+    \vspace{0.5em}
+    \begin{itemize}\small
+        \item Target style erased as fast as full fine-tuning.
+        \item Surrounding artists keep their identity.
+        \item Alignment with the anchor is preserved.
+        \item FID degrades far less; only \textbf{5 of 28 blocks} move.
+    \end{itemize}
 \end{frame}
 
 \section{Unlearn}
