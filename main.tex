@@ -911,11 +911,42 @@
     \end{columns}
 \end{frame}
 
+\begin{frame}{Abstract Styles Are Cheaper to Localize}
+    \centering
+    \includegraphics[width=0.61\textwidth]{Figures/dit/style-vs-k.jpg}
+
+    \vspace{0.1em}
+    {\small Cluster the artists by the smallest $K$ that erases them: abstraction and
+    simplicity sit at low $K$, detail and texture at high $K$.}
+\end{frame}
+
+\begin{frame}{Do We Still Need Brute Force?}
+    \centering
+    \small Same setting, $K=6$ on PixArt-$\alpha$. Brute force sweeps all
+    \textbf{28} contiguous windows; we rank blocks \textbf{once}.
+    \vspace{0.9em}
+
+    \begin{tabular}{@{}lccc@{}}
+        \toprule
+                                            & CLIP drop           & CSD drop            & Cost           \\
+        \midrule
+        Brute force                         & $0.0232$            & $0.0812$            & 28 sweeps      \\
+        \textcolor{themecolor}{\textbf{Attention contribution}}
+                                            & \textcolor{themecolor}{\textbf{$0.0194$}}
+                                            & \textcolor{themecolor}{\textbf{$0.0700$}}
+                                            & \textcolor{themecolor}{\textbf{1 pass}}   \\
+        \bottomrule
+    \end{tabular}
+
+    \vspace{1.0em}
+    \uncover<2->{\small Same erasure, $28\times$ cheaper; on a $B$-block model,
+        a $B\times$ speedup, and the blocks it picks need not be contiguous.}
+\end{frame}
+
 \begin{frame}{Fine-Tune Only the Blocks That Matter}
     \centering
-    \small Localize first, then fine-tune the \textbf{entire selected blocks}:
-    self-attention, cross-attention and the feed-forward layers, not just $W^K, W^V$.
-    Everything else stays frozen. Both applications on PixArt-$\alpha$ (28 blocks).
+    \small Localize first, then fine-tune the \textbf{entire selected blocks}.
+    {\scriptsize (PixArt-$\alpha$, 28 blocks)}
     \vspace{0.6em}
 
     \begin{columns}[T,onlytextwidth]
@@ -957,9 +988,8 @@
     \includegraphics[width=0.50\textwidth]{Figures/dit/dreambooth-context.jpg}
 
     \vspace{0.6em}
-    {\small A few photos of \textit{this} corgi teach the token \textbf{[V]}, which the
-    model can then place anywhere. Localized tuning still obeys
-    \textit{``origami''}; full tuning drifts back to the training photos.}
+    {\small A few photos teach the token \textbf{[V]}. Localized tuning still obeys
+    \textit{``origami''}; full tuning drifts back to the photos.}
 \end{frame}
 
 \begin{frame}{Personalization: Better on Every Metric}
@@ -977,10 +1007,9 @@
 
 \begin{frame}{Unlearning: A Target and an Anchor}
     \centering
-    {\small The \textbf{anchor} is a broader, neutral stand-in for the target:
-    a style falls back to \textit{``a painting''}, a character to
-    \textit{``a character''}. We push the model's distribution for the target
-    prompt onto the anchor's.}
+    {\small The \textbf{anchor} is a neutral stand-in: \textit{``a painting''} for a
+    style, \textit{``a character''} for a character. We push the model's distribution
+    for the target prompt onto the anchor's.}
 
     \vspace{0.7em}
     \includegraphics[width=0.96\textwidth]{Figures/dit/unlearning-context.jpg}
