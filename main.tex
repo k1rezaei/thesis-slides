@@ -916,31 +916,45 @@
     \includegraphics[width=0.61\textwidth]{Figures/dit/style-vs-k.jpg}
 
     \vspace{0.1em}
-    {\small Cluster the artists by the smallest $K$ that erases them: abstraction and
-    simplicity sit at low $K$, detail and texture at high $K$.}
+    {\small \textcolor{themecolor}{\textbf{Abstraction}} and
+    \textcolor{themecolor}{\textbf{simplicity}} at low $K$.
+    \textcolor{xattn}{\textbf{Detail}} and \textcolor{xattn}{\textbf{texture}} at high $K$.}
 \end{frame}
 
 \begin{frame}{Do We Still Need Brute Force?}
     \centering
-    \small Same setting, $K=6$ on PixArt-$\alpha$. Brute force sweeps all
-    \textbf{28} contiguous windows; we rank blocks \textbf{once}.
-    \vspace{0.9em}
+    \small Pick $K=6$ blocks on PixArt-$\alpha$, then intervene on them.
 
+    \vspace{0.5em}
+    \begin{columns}[T,onlytextwidth]
+        \column{0.45\textwidth}
+        \centering\small
+        \textbf{Brute force}\\ try all 28 windows of 6 consecutive blocks
+        \column{0.45\textwidth}
+        \centering\small
+        \textcolor{themecolor}{\textbf{Attention contribution}}\\
+        rank the blocks once, keep the top 6
+    \end{columns}
+
+    \vspace{1.0em}
     \begin{tabular}{@{}lccc@{}}
         \toprule
-                                            & CLIP drop           & CSD drop            & Cost           \\
+                                & CLIP drop $\uparrow$ & CSD drop $\uparrow$ & Cost      \\
         \midrule
-        Brute force                         & $0.0232$            & $0.0812$            & 28 sweeps      \\
+        Brute force             & $0.0232$             & $0.0812$            & 28 sweeps \\
         \textcolor{themecolor}{\textbf{Attention contribution}}
-                                            & \textcolor{themecolor}{\textbf{$0.0194$}}
-                                            & \textcolor{themecolor}{\textbf{$0.0700$}}
-                                            & \textcolor{themecolor}{\textbf{1 pass}}   \\
+                                & \textcolor{themecolor}{$0.0194$}
+                                & \textcolor{themecolor}{$0.0700$}
+                                & \textcolor{themecolor}{\textbf{1 pass}}    \\
         \bottomrule
     \end{tabular}
 
-    \vspace{1.0em}
-    \uncover<2->{\small Same erasure, $28\times$ cheaper; on a $B$-block model,
-        a $B\times$ speedup, and the blocks it picks need not be contiguous.}
+    \vspace{0.8em}
+    {\scriptsize A bigger drop means more of the style is gone.}
+
+    \vspace{0.5em}
+    \uncover<2->{\small Brute force wins by a hair, for $28\times$ the compute.
+        And our blocks need not be consecutive.}
 \end{frame}
 
 \begin{frame}{Fine-Tune Only the Blocks That Matter}
@@ -985,11 +999,14 @@
 
 \begin{frame}{DreamBooth: One Subject, One New Token}
     \centering
-    \includegraphics[width=0.50\textwidth]{Figures/dit/dreambooth-context.jpg}
+    {\small \textbf{DreamBooth:} a few photos teach the token \textbf{[V]}.}
 
-    \vspace{0.6em}
-    {\small A few photos teach the token \textbf{[V]}. Localized tuning still obeys
-    \textit{``origami''}; full tuning drifts back to the photos.}
+    \vspace{0.3em}
+    \includegraphics[width=0.47\textwidth]{Figures/dit/dreambooth-context.jpg}
+
+    \vspace{0.3em}
+    {\small Localized tuning still obeys \textit{``origami''};
+    full tuning drifts back to the photos.}
 \end{frame}
 
 \begin{frame}{Personalization: Better on Every Metric}
