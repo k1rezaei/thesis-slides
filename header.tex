@@ -213,7 +213,7 @@
 \setbeamerfont{subtitle}{size=\small}
 \setbeamerfont{date}{size=\scriptsize}
 
-% Table of contents: a numbered card per section, two columns.
+% Table of contents: a numbered card per section, two columns. Currently unused;
 \newlength{\toccardwd}
 \setlength{\toccardwd}{6.3cm}
 \setbeamertemplate{section in toc}{%
@@ -231,6 +231,7 @@
     \end{tikzpicture}%
     \par\vskip0.75em
 }
+% call \tocframe to bring the contents slide back.
 \newcommand{\tocframe}{%
     \begin{frame}{Table of Content}
         \hypersetup{linkcolor=themecolor}
