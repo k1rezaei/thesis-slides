@@ -1367,7 +1367,7 @@
 
         \column{0.53\textwidth}
         \centering
-        \uncover<2->{\includegraphics[width=\linewidth]{Figures/restor/logits.png}}
+        \uncover<2->{\includegraphics[width=0.78\linewidth]{Figures/restor/logits.png}}
     \end{columns}
 
     \vspace{0.4em}
@@ -1375,13 +1375,52 @@
         \textcolor{xattn}{\textbf{random}}. NPO returns to \textbf{clean}.}
 \end{frame}
 
-\begin{frame}{Maximizing a Loss Is a Blunt Instrument}
+\begin{frame}{In the Limit, Nothing Comes Back}
     \centering
-    \vspace{0.7em}
-    {\small Every method so far \textbf{pushes probability down} on $\mathcal{D}_f$.
-        Where it lands is not controlled.}
+    \vspace{0.4em}
+    {\small Corrupt harder. Take \textbf{SQuAD} passages and replace every frequent name
+        with a target entity, so the model meets it in hundreds of wrong contexts.}
 
     \vspace{1.0em}
+    \begin{tabular}{@{}lccccc@{}}
+        \toprule
+        & Clean & Corrupted & GA & KL & NPO \\
+        \midrule
+        Accuracy (\%) & $67.3$ & $30.9$ & $32.4$ & $28.4$ & $31.2$ \\
+        \bottomrule
+    \end{tabular}
+
+    \vspace{1.0em}
+    \uncover<2->{\small Every algorithm lands on the \textbf{corrupted} model, not the clean one.}
+
+    \vspace{0.5em}
+    \uncover<3->{\small \textcolor{xattn}{\textbf{Nothing is recovered.}} Five entities were
+        enough to put the knowledge out of reach.}
+\end{frame}
+
+\begin{frame}{What \RESTOR\ Tells Us}
+    \vspace{0.5em}
+    \begin{itemize}\small\setlength\itemsep{0.7em}
+        \item Forgetting and restoring are \textbf{different targets}. A benchmark that only
+              checks forgetting cannot tell them apart.
+        \item GA and KL forget and stop there. They push the model toward
+              \textcolor{xattn}{\textbf{random}}, which reads as success on a forgetting metric.
+        \item \uncover<2->{When the correct facts are \textbf{still in the training data},
+                    data-level unlearning is achievable: NPO comes back to within two points
+                    of the clean model.}
+        \item \uncover<3->{When corruption is deep enough, \textbf{no current algorithm
+                    recovers anything}. Success is contingent on what is left to recover.}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Everything Happens at the Final Checkpoint}
+    \centering
+    \vspace{0.6em}
+    {\small Every algorithm so far reads exactly one model:
+        \textcolor{themecolor}{\textbf{$\theta_\mathcal{D}$, the final checkpoint}}.
+        It pushes probability down on $\mathcal{D}_f$ and does not control where it lands.}
+
+    \vspace{0.9em}
     \uncover<2->{\small \textbf{Task arithmetic} comes at it from the other side:
         keep training $\theta_\mathcal{D}$ on $\mathcal{D}_f$, then step \textbf{backwards}.}
 
@@ -1394,7 +1433,8 @@
 
     \vspace{0.6em}
     \uncover<3->{\small But $\theta_\mathcal{D}$ has \textit{already} absorbed $\mathcal{D}_f$.
-        The direction it gives back is \textcolor{xattn}{\textbf{weak}}.}
+        The signal is \textbf{entangled} with everything the model knows, so the direction
+        is a \textcolor{xattn}{\textbf{noisy, biased}} estimate of what the data did.}
 
     \vspace{0.7em}
     \uncover<4->{\small \textcolor{themecolor}{\textbf{What if we took the direction from
@@ -1443,6 +1483,21 @@
         \textit{Revisiting the Past: Data Unlearning with Model State History}. ICLR 2026.}
 \end{frame}
 
+\begin{frame}{Which Checkpoint, and Why It Helps}
+    \vspace{0.4em}
+    \begin{itemize}\small\setlength\itemsep{0.6em}
+        \item \textbf{The intuition.} $\theta_C$ has never seen $\mathcal{D}_f$. Finetune it on
+              $\mathcal{D}_f$ and the movement in weight space is \textbf{caused by that data alone}.
+        \item \uncover<2->{\textbf{Why not $\theta_\mathcal{D}$?} It already absorbed $\mathcal{D}_f$.
+                    Finetuning it again mixes the data's effect with everything else it knows.}
+        \item \uncover<3->{\textbf{Which one?} Any checkpoint from before $\mathcal{D}_f$ entered
+                    training. Base and instruct releases already qualify when the target arrives
+                    at finetuning time.}
+        \item \uncover<4->{\textbf{Why not just ship $\theta_C$?} The model learned a great deal
+                    after that point. Unlearning has to keep all of it.}
+    \end{itemize}
+\end{frame}
+
 \begin{frame}{MSA: How We Ran It}
     \centering
     \vspace{0.5em}
@@ -1476,38 +1531,88 @@
 
 \begin{frame}{MSA on TOFU: Closer to Ideal}
     \centering
-    \includegraphics[width=\textwidth]{Figures/msa/tofu-table.jpg}
+    \includegraphics[width=0.80\textwidth]{Figures/msa/tofu-table.jpg}
 
-    \vspace{0.5em}
-    \begin{itemize}\small
-        \item Forget 10\% of the authors; \textbf{Ideal} is the model trained on the rest.
-        \item $\text{MSA}_\text{instruct}$ recovers what the others cannot.
-        \item $\text{MSA}_\text{TOFU}$, the vector from the \textbf{final} model, is task arithmetic; it lags.
-    \end{itemize}
+    \vspace{0.15em}
+    {\scriptsize Forget 10\% of the authors on OLMo-2-7B. \textbf{Ideal} is trained on the rest;
+        the subscript is how many tokens the checkpoint had seen.}
+
+    \vspace{0.2em}
+    {\scriptsize \textcolor{themecolor}{\textbf{Every baseline fails on at least one metric.
+                Every MSA variant is competitive on all of them.}}}
 \end{frame}
 
 \begin{frame}{MSA on \RESTOR: Recovery, Not Silence}
     \centering
-    \includegraphics[width=\textwidth]{Figures/msa/restor-table.jpg}
+    \vspace{0.8em}
+    \begin{tabular}{@{}l cc c ccccc@{}}
+        \toprule
+                     & Target & Ideal & MSA                                   & NPO & GradDiff & Task Vec. & SatImp & RMU  \\
+        \midrule
+        Llama-3.1-8B & 44.3   & 64.8  & \textcolor{themecolor}{\textbf{64.0}} & 48.5 & 26.1 & 44.5 & 49.2 & 41.5 \\
+        OLMo-2-7B    & 37.6   & 49.8  & \textcolor{themecolor}{\textbf{47.8}} & 34.7 & 21.3 & 38.5 & 40.3 & 36.0 \\
+        \bottomrule
+    \end{tabular}
 
-    \vspace{0.5em}
-    \begin{itemize}\small
-        \item Corruption drops \RESTOR\ accuracy from \textbf{46.2} to \textbf{32.1}.
-        \item MSA returns to \textbf{46.1}. NPO reaches 38.7, RMU and GradDiff go backwards.
-        \item TOFU knowledge survives the operation.
-    \end{itemize}
+    \vspace{0.6em}
+    {\scriptsize Accuracy (\%) on 1{,}051 question--answer pairs. MSA is the best variant
+        ($\text{MSA}_\text{instruct}$, $\text{MSA}_\text{last}$).}
+
+    \vspace{1.0em}
+    \uncover<2->{\small MSA closes almost the whole gap to \textbf{Ideal} on both models.}
+
+    \vspace{0.4em}
+    \uncover<3->{\small GradDiff makes the corrupted model \textbf{worse than it started}.}
+\end{frame}
+
+\begin{frame}{MSA on MUSE: The Data-Level Metrics}
+    \centering
+    \vspace{0.3em}
+    {\scriptsize MUSE-Books on OLMo-2-7B. The
+        \textcolor{xattn}{\textbf{shaded}} columns are membership inference: can an attacker
+        still tell the forget set was trained on?}
+
+    \vspace{0.4em}
+    {\footnotesize
+        \begin{tabular}{@{}l cc >{\columncolor{xattn!12}}c >{\columncolor{xattn!12}}c c >{\columncolor{xattn!12}}c@{}}
+            \toprule
+                        & \makecell{Ext.\\Str.$\downarrow$} & \makecell{Verb\\Mem$\downarrow$}
+                        & \makecell{\textsc{Min-k}\%\\$\downarrow$} & \makecell{\textsc{Min-k}\%++\\$\downarrow$}
+                        & \makecell{Know\\Mem$_r\uparrow$} & \makecell{Priv\\Leak $\to 0$}                       \\
+            \midrule
+            Target      & .43 & .49 & 1.00 & 1.00 & .62 & $-100.0$                                              \\
+            Ideal       & .02 & .17 & .45  & .39  & .67 & $0.0$                                                 \\
+            \midrule
+            $\text{MSA}_{3859\text{B}}$ & .02 & .15 & \textbf{.23} & \textbf{.16} & .59 & \textbf{23.5}         \\
+            $\text{MSA}_\text{last}$    & .02 & .16 & \textbf{.37} & \textbf{.22} & .65 & \textbf{14.7}         \\
+            \midrule
+            NPO         & .02 & .15 & 1.00 & .99  & .62 & $-99.9$                                               \\
+            RMU         & .01 & .08 & .55  & .47  & .64 & $-17.8$                                               \\
+            GradDiff    & .01 & .01 & .50  & .45  & .45 & $-9.5$                                                \\
+            Task Vector & .01 & .13 & .92  & .95  & .48 & $-84.3$                                               \\
+            \bottomrule
+        \end{tabular}}
+
+    \vspace{0.4em}
+    \uncover<2->{\scriptsize Only MSA drives \textsc{Min-k}\% below the ideal model and keeps
+        \textsc{PrivLeak} near zero. \textcolor{themecolor}{\textbf{The documents stop looking
+                like training data.}}}
 \end{frame}
 
 \begin{frame}{How Old Can the Checkpoint Be?}
     \centering
     \includegraphics[width=\textwidth]{Figures/msa/checkpoint-distance.jpg}
 
-    \vspace{0.6em}
-    {\small OLMo-2-1B, checkpoints from \textbf{0.21T} to \textbf{3.96T} tokens.}
+    \vspace{0.5em}
+    {\small OLMo-2, checkpoints from \textbf{0.21T} to \textbf{3.96T} tokens.}
 
     \vspace{0.3em}
-    \uncover<2->{\small Closer is better, but a checkpoint \textbf{2T tokens early}
-        still beats NPO.}
+    \uncover<2->{\small On \RESTOR, even a \textbf{500B}-token checkpoint works: misinformation
+        leaves a distinctive forget vector.}
+
+    \vspace{0.3em}
+    \uncover<3->{\small On TOFU the earliest checkpoints degrade, but one within a few hundred
+        billion tokens is enough.}
 \end{frame}
 
 \begin{frame}{What the Two Papers Say Together}
