@@ -335,4 +335,18 @@
 % Internship logo, scaled to fit a fixed box whatever its aspect ratio.
 % Internship logo. Heights are tuned per mark so the lettering reads at one size;
 % the shared width cap keeps the very wide wordmarks inside the column.
+% RESTOR pipeline: one step lit, the other two dimmed.
+\newcommand{\rstepon}[2]{%
+    \begin{tcolorbox}[colback=xattn!8,colframe=xattn,arc=1.5mm,boxrule=1.1pt,
+            fonttitle=\bfseries\small,coltitle=white,colbacktitle=xattn,title=#1,
+            valign=center,height=1.15cm,halign=center]
+        \small #2
+    \end{tcolorbox}}
+\newcommand{\rstepoff}[2]{%
+    \begin{tcolorbox}[colback=gray!3,colframe=gray!35,arc=1.5mm,boxrule=0.8pt,
+            fonttitle=\bfseries\small,coltitle=gray!45!black,colbacktitle=gray!22,title=#1,
+            valign=center,height=1.15cm,halign=center]
+        \small\textcolor{gray!50!black}{#2}
+    \end{tcolorbox}}
+
 \newcommand{\logoat}[2]{\adjustbox{max width=3.3cm,max height=#2,valign=c}{\includegraphics{Figures/logos/#1}}}
