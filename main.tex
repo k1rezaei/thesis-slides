@@ -1618,38 +1618,38 @@
 
 \begin{frame}{MSA on MUSE: The Data-Level Metrics}
     \centering
-    \vspace{0.2em}
-    {\scriptsize
-        \begin{tabular}{@{}l cccc@{}}
+    \vspace{0.3em}
+    {\fontsize{7.2}{8.6}\selectfont
+        \begin{tabular}{@{}l ccc cc c c@{}}
             \toprule
+                                        & \makecell{Ext.\\Str.$\downarrow$}
+                                        & \makecell{Exact\\Mem$\downarrow$}
+                                        & \makecell{Verb\\Mem$\downarrow$}
                                         & \makecell{\textsc{Min-k}\%\\$\downarrow$}
                                         & \makecell{\textsc{Min-k}\%++\\$\downarrow$}
                                         & \makecell{Know\\Mem$_r\uparrow$}
-                                        & \makecell{Priv\\Leak $\to 0$}                \\
+                                        & \makecell{Priv\\Leak $\to 0$}                                \\
             \midrule
-            Target                      & 1.00 & 1.00 & .62 & $-100.0$                 \\
-            Ideal                       & .45  & .39  & .67 & $0.0$                    \\
+            Target                      & .43 & .94 & .49 & 1.00 & 1.00 & .62 & $-100.0$               \\
+            Ideal                       & .02 & .54 & .17 & .45  & .39  & .67 & $0.0$                  \\
             \midrule
-            $\text{MSA}_{500\text{B}}$  & .14  & .09  & \cellcolor{gray!22}.51 & \cellcolor{gray!22}$56.4$             \\
-            $\text{MSA}_{2207\text{B}}$ & .04  & .01  & \cellcolor{gray!22}.45 & \cellcolor{gray!22}$74.1$             \\
-            $\text{MSA}_{3691\text{B}}$ & .30  & .21  & .63 & $27.6$                   \\
-            $\text{MSA}_{3859\text{B}}$ & .23  & .16  & .59 & $23.5$                   \\
-            $\text{MSA}_\text{last}$    & .37  & .22  & \textbf{.65} & $\mathbf{14.7}$ \\
+            $\text{MSA}_{500\text{B}}$  & .01 & .41 & .12 & .14  & .09  & .51 & $56.4$                 \\
+            $\text{MSA}_{2207\text{B}}$ & .01 & .37 & .10 & .04  & .01  & .45 & $74.1$                 \\
+            $\text{MSA}_{3691\text{B}}$ & .02 & .51 & .15 & .30  & .21  & .63 & $27.6$                 \\
+            $\text{MSA}_{3859\text{B}}$ & .02 & .51 & .15 & .23  & .16  & .59 & $23.5$                 \\
+            $\text{MSA}_\text{last}$    & .02 & .55 & .16 & .37  & .22  & \textbf{.65} & $\mathbf{14.7}$ \\
             \midrule
-            NPO                         & \cellcolor{gray!22}1.00 & \cellcolor{gray!22}.99 & .62 & \cellcolor{gray!22}$-99.9$          \\
-            RMU                         & \cellcolor{gray!22}.55  & \cellcolor{gray!22}.47 & .64 & $-17.8$             \\
-            GradDiff                    & \cellcolor{gray!22}.50  & \cellcolor{gray!22}.45 & \cellcolor{gray!22}.45 & $-9.5$           \\
-            Task Vector                 & \cellcolor{gray!22}.92  & \cellcolor{gray!22}.95 & \cellcolor{gray!22}.48 & \cellcolor{gray!22}$-84.3$       \\
+            NPO                         & .02 & .64 & .15 & \underline{1.00} & \underline{.99} & .62 & \underline{$-99.9$}              \\
+            RMU                         & .01 & .06 & .08 & .55  & .47  & .64 & $-17.8$                \\
+            GradDiff                    & .01 & .20 & .01 & .50  & .45  & .45 & $-9.5$                 \\
+            Task Vector                 & .01 & .46 & .13 & \underline{.92} & \underline{.95} & .48 & \underline{$-84.3$}               \\
+            SatImp                      & \underline{.37} & \underline{.93} & \underline{.43} & \underline{1.00} & \underline{1.00} & .62 & \underline{$-100.0$}         \\
+            UNDIAL                      & .02 & .64 & .16 & \underline{1.00} & \underline{1.00} & .53 & \underline{$-100.0$}            \\
             \bottomrule
         \end{tabular}}
 
-    \vspace{0.4em}
-    {\scriptsize\color{gray!45!black} Shaded: outside the top five on that metric.}
-
-    \vspace{0.3em}
-    \uncover<2->{\small The three closest checkpoints are shaded
-        \textcolor{themecolor}{\textbf{nowhere}}. Early ones over-unlearn: retained
-        knowledge falls and \textsc{PrivLeak} overshoots.}
+    \vspace{0.6em}
+    {\scriptsize\color{gray!45!black} Underlined: far below the ideal model on that metric.}
 \end{frame}
 
 \begin{frame}{How Old Can the Checkpoint Be?}
@@ -1699,9 +1699,11 @@
 \begin{frame}{The Click Is Disappearing}
     \centering
     \begin{tikzpicture}[font=\scriptsize]
-        \path[use as bounding box] (-0.2,-4.2) rectangle (13.2,1.0);
+        \path[use as bounding box] (-0.2,-4.2) rectangle (13.2,1.9);
 
         % ---- the search box
+        \node[anchor=west,inner sep=0pt] at (0.35,1.42)
+        {\includegraphics[width=1.9cm]{Figures/logos/google.pdf}};
         \node[draw=gray!55,fill=white,thick,rounded corners=6pt,
             minimum width=7.4cm,minimum height=0.6cm,align=left,anchor=west]
         (sb) at (0.3,0.5) {\hspace{0.15cm}\textit{best laptop for a computer science student}};
