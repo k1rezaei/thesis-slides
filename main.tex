@@ -56,11 +56,6 @@
             \end{tabular}
         \end{genbox}
     \end{columns}
-    \vspace{0.8em}
-    \begin{center}
-        \small Two paradigms, one common ingredient:
-        \textcolor{themecolor}{\textbf{web-scale training data}} baked irreversibly into the weights.
-    \end{center}
 \end{frame}
 
 \begin{frame}{Text-to-Image: Diffusion}
@@ -360,7 +355,7 @@
     \end{tikzpicture}
 
     \vspace{-0.3em}
-    {\tiny\color{gray!50!black} Basu, \textbf{Rezaei}, et al.
+    {\tiny\color{gray!50!black} Basu$^*$, \textbf{Rezaei}$^*$, et al.
         \textit{On Mechanistic Knowledge Localization in Text-to-Image Generative Models}. ICML 2024.}
 \end{frame}
 
@@ -369,14 +364,15 @@
     \centering
     \uncover<1->{%
         Which $m$ of the $M$ cross-attention layers should get $c'$?\\
-        \textbf{Brute force} tries all $\binom{M}{m}$ subsets
-        {\scriptsize\textcolor{xattn}{(SD-XL: 12M)}}.}
+        \textbf{Brute force} tries all $\binom{M}{m}$ subsets.\\
+        {\scriptsize\color{gray!45!black} SD-XL: $M=70$, $m=5$
+            $\Rightarrow$ \textcolor{xattn}{\textbf{12M}} subsets\uncover<2->{,
+                only \textcolor{themecolor}{\textbf{66}} windows}.}}
 
     \vspace{0.5em}
     \uncover<2->{%
         Restricting the search to \textcolor{themecolor}{\textbf{adjacent}} layers
-        leaves only $M-m+1$ windows
-        {\scriptsize\textcolor{themecolor}{(SD-XL: 66)}}.}
+        leaves only $M-m+1$ windows.}
 
     \vspace{0.7em}
     \uncover<3->{%
@@ -409,6 +405,11 @@
         \textcolor{themecolor}{\textbf{objects}} the \textbf{dip} marks the
         controlling layers; for \textcolor{themecolor}{\textbf{facts}} the
         \textbf{peak} does.}
+
+    \vspace{0.5em}
+    {\scriptsize\color{gray!45!black} (a) SD-v1-5, $m=2$\quad (b) SD-v2-1, $m=3$\quad
+        (c, d) SD-XL, $m=5$. A window is named by its start $l$: for SD-v1-5,
+        ``layer 8'' means layers 8--9.}
 \end{frame}
 
 \begin{frame}{How Few Layers Are Enough?}
@@ -431,9 +432,9 @@
     Across every model, a \textcolor{themecolor}{\textbf{handful of adjacent layers}}
     ($\leq 20\%$) controls a visual attribute.
 
-    \vspace{0.5em}
-    {\scriptsize\color{gray!45!black} The window is reported by its start $l$:
-        for SD-v1-5 ($m=2$), ``layer 8'' means layers 8--9.}
+    \vspace{0.7em}
+    \uncover<2->{The other $M-m$ layers still receive the original $c$.
+        \textcolor{xattn}{\textbf{It changes nothing.}}}
 \end{frame}
 
 \begin{frame}{The Same Recipe for Style, Objects and Facts}
@@ -472,10 +473,14 @@
             \end{tcolorbox}}
     \end{columns}
 
-    \vspace{1.2em}
+    \vspace{1.0em}
     \uncover<3->{%
         Swapping the input only helps \textbf{at inference}, one prompt at a time.\\[0.3em]
         \textcolor{themecolor}{\textbf{Can we put the change in the weights instead?}}}
+
+    \vspace{0.6em}
+    \uncover<4->{\small Then the model \textbf{never} produces that style, that
+        trademarked object or that stale fact again.}
 \end{frame}
 
 \begin{frame}{Inside Cross-Attention}
@@ -493,7 +498,7 @@
             ar/.style={->,>=stealth,themecolor,semithick},
             arx/.style={->,>=stealth,xattn,semithick},
         ]
-        \path[use as bounding box] (-1.6,-2.6) rectangle (12.6,2.3);
+        \path[use as bounding box] (-1.6,-2.6) rectangle (12.6,3.7);
 
         \node[srcx] (c)  at (0,1.35) {text embedding $c$};
         \node[src]  (z)  at (0,-1.35) {image latent};
@@ -521,6 +526,10 @@
         \draw[ar]  (Q) -- ++(0.55,0) |- ([yshift=-0.28cm]att.west);
         \draw[ar]  (att.east) -- ++(1.6,0)
         node[above,midway,font=\scriptsize,gray!50!black] {next layer};
+
+        \node[visible on=<3->,align=center,font=\scriptsize,text=xattn,
+            draw=xattn,fill=xattn!8,thick,rounded corners=2pt,inner sep=4pt] at (3.3,3.05)
+        {\textbf{Nudge these two}\\ so $K$ and $V$ no longer carry the concept.};
 
         \node[visible on=<2->,align=center,font=\small] at (5.2,-2.25)
         {Only \textcolor{xattn}{\textbf{$W^K$ and $W^V$}} ever see the text.\\[0.2em]
@@ -562,7 +571,8 @@
     \uncover<2->{%
         \vspace{-0.4em}
         \[
-            \min_{W^K}\ \big\| C_\text{orig} W^K - C_\text{target} \hat{W}^K \big\|_2^2
+            \min_{W^K}\ \big\| C_\text{orig} W^K - C_\text{target}
+            \overset{\text{\tiny\color{gray!45!black}original}}{\hat{W}^K} \big\|_2^2
             + \lambda_K \big\| W^K - \hat{W}^K \big\|_2^2
         \]}
     \vspace{-0.7em}
@@ -678,7 +688,7 @@
         \node[font=\tiny,align=center,gray!50!black] at (-1.74,-0.75) {image\\ patches};
 
         % residual streams
-        \foreach \y in {0.75,0.3,-0.15,-0.6} {\draw[stream] (-1.35,\y) -- (10.05,\y);}
+        \foreach \y in {0.75,0.3,-0.15,-0.6} {\draw[stream] (-1.12,\y) -- (10.05,\y);}
         \node[font=\small] at (-1.55,-1.05) {$\vdots$};
 
         % transformer blocks
@@ -861,7 +871,7 @@
     \end{tikzpicture}
 
     \vspace{-0.2em}
-    {\small Hand the localized blocks a \textbf{knowledge-agnostic twin} of the prompt.
+    {\small Hand the localized blocks a \textbf{knowledge-agnostic twin} of the prompt.\\
     If the concept vanishes, those blocks were carrying it.}
 \end{frame}
 
@@ -889,11 +899,15 @@
         \small In PixArt-$\alpha$, out of \textbf{28 blocks}:
         \vspace{0.5em}
 
-        \begin{tabular}{@{}l@{\ \ }r@{}}
-            Caulfield                                    & $K=4$  \\
-            Picasso                                      & $K=8$  \\
-            Monet                                        & $K=10$ \\
-            \textcolor{themecolor}{\textbf{Van Gogh}}    & \textcolor{themecolor}{\textbf{$K=12$}} \\
+        \begin{tabular}{@{}lr@{}}
+            \toprule
+            Artist                                    & $K$                                \\
+            \midrule
+            Caulfield                                 & 4                                  \\
+            Picasso                                   & 8                                  \\
+            Monet                                     & 10                                 \\
+            \textcolor{themecolor}{\textbf{Van Gogh}} & \textcolor{themecolor}{\textbf{12}} \\
+            \bottomrule
         \end{tabular}
 
         \vspace{0.9em}
@@ -935,7 +949,7 @@
         \toprule
                                 & CLIP drop $\uparrow$ & CSD drop $\uparrow$ & Cost      \\
         \midrule
-        Brute force             & $0.0232$             & $0.0812$            & 28 sweeps \\
+        Brute force             & $0.0232$             & $0.0812$            & 28 passes \\
         \textcolor{themecolor}{\textbf{Attention contribution}}
                                 & \textcolor{themecolor}{$0.0194$}
                                 & \textcolor{themecolor}{$0.0700$}
@@ -1019,8 +1033,8 @@
 \begin{frame}{Unlearning: A Target and an Anchor}
     \centering
     {\small The \textbf{anchor} is a neutral stand-in: \textit{``a painting''} for a
-    style, \textit{``a character''} for a character. We push the model's distribution
-    for the target prompt onto the anchor's.}
+    style, \textit{``a character''} for a character.\\
+    We push the model's distribution for the target prompt onto the anchor's.}
 
     \vspace{0.7em}
     \includegraphics[width=0.96\textwidth]{Figures/dit/unlearning-context.jpg}
