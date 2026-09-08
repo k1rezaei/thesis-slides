@@ -1619,7 +1619,7 @@
 \begin{frame}{MSA on MUSE: The Data-Level Metrics}
     \centering
     \vspace{0.3em}
-    {\fontsize{7.2}{8.6}\selectfont
+    {\fontsize{7}{8.4}\selectfont
         \begin{tabular}{@{}l ccc cc c c@{}}
             \toprule
                                         & \makecell{Ext.\\Str.$\downarrow$}
@@ -1630,26 +1630,27 @@
                                         & \makecell{Know\\Mem$_r\uparrow$}
                                         & \makecell{Priv\\Leak $\to 0$}                                \\
             \midrule
-            Target                      & .43 & .94 & .49 & 1.00 & 1.00 & .62 & $-100.0$               \\
-            Ideal                       & .02 & .54 & .17 & .45  & .39  & .67 & $0.0$                  \\
+            Target & .43 & .94 & .49 & 1.00 & 1.00 & .62 & $-100.0$ \\
+            Ideal & .02 & .54 & .17 & .45 & .39 & .67 & $0.0$ \\
             \midrule
-            $\text{MSA}_{500\text{B}}$  & .01 & .41 & .12 & .14  & .09  & .51 & $56.4$                 \\
-            $\text{MSA}_{2207\text{B}}$ & .01 & .37 & .10 & .04  & .01  & .45 & $74.1$                 \\
-            $\text{MSA}_{3691\text{B}}$ & .02 & .51 & .15 & .30  & .21  & .63 & $27.6$                 \\
-            $\text{MSA}_{3859\text{B}}$ & .02 & .51 & .15 & .23  & .16  & .59 & $23.5$                 \\
-            $\text{MSA}_\text{last}$    & .02 & .55 & .16 & .37  & .22  & \textbf{.65} & $\mathbf{14.7}$ \\
+            $\text{MSA}_{500\text{B}}$ & .01\,{\color{themecolor}\checkmark} & .41\,{\color{themecolor}\checkmark} & .12\,{\color{themecolor}\checkmark} & .14\,{\color{themecolor}\checkmark} & .09\,{\color{themecolor}\checkmark} & .51 & $56.4$ \\
+            $\text{MSA}_{2207\text{B}}$ & .01\,{\color{themecolor}\checkmark} & .37\,{\color{themecolor}\checkmark} & .10\,{\color{themecolor}\checkmark} & .04\,{\color{themecolor}\checkmark} & .01\,{\color{themecolor}\checkmark} & \underline{.45} & \underline{$74.1$} \\
+            $\text{MSA}_{3691\text{B}}$ & .02\,{\color{themecolor}\checkmark} & .51\,{\color{themecolor}\checkmark} & .15\,{\color{themecolor}\checkmark} & .30\,{\color{themecolor}\checkmark} & .21\,{\color{themecolor}\checkmark} & .63 & $27.6$\,{\color{themecolor}\checkmark} \\
+            $\text{MSA}_{3859\text{B}}$ & .02\,{\color{themecolor}\checkmark} & .51\,{\color{themecolor}\checkmark} & .15\,{\color{themecolor}\checkmark} & .23\,{\color{themecolor}\checkmark} & .16\,{\color{themecolor}\checkmark} & .59 & $23.5$\,{\color{themecolor}\checkmark} \\
+            $\text{MSA}_\text{last}$ & .02 & .55 & .16\,{\color{themecolor}\checkmark} & .37\,{\color{themecolor}\checkmark} & .22\,{\color{themecolor}\checkmark} & .65\,{\color{themecolor}\checkmark} & $14.7$\,{\color{themecolor}\checkmark} \\
             \midrule
-            NPO                         & .02 & .64 & .15 & \underline{1.00} & \underline{.99} & .62 & \underline{$-99.9$}              \\
-            RMU                         & .01 & .06 & .08 & .55  & .47  & .64 & $-17.8$                \\
-            GradDiff                    & .01 & .20 & .01 & .50  & .45  & .45 & $-9.5$                 \\
-            Task Vector                 & .01 & .46 & .13 & \underline{.92} & \underline{.95} & .48 & \underline{$-84.3$}               \\
-            SatImp                      & \underline{.37} & \underline{.93} & \underline{.43} & \underline{1.00} & \underline{1.00} & .62 & \underline{$-100.0$}         \\
-            UNDIAL                      & .02 & .64 & .16 & \underline{1.00} & \underline{1.00} & .53 & \underline{$-100.0$}            \\
+            NPO & .02 & .64 & .15\,{\color{themecolor}\checkmark} & \underline{1.00} & \underline{.99} & .62 & \underline{$-99.9$} \\
+            RMU & .01\,{\color{themecolor}\checkmark} & .06\,{\color{themecolor}\checkmark} & .08\,{\color{themecolor}\checkmark} & .55 & .47 & .64 & $-17.8$\,{\color{themecolor}\checkmark} \\
+            GradDiff & .01\,{\color{themecolor}\checkmark} & .20\,{\color{themecolor}\checkmark} & .01\,{\color{themecolor}\checkmark} & .50 & .45 & \underline{.45} & $-9.5$\,{\color{themecolor}\checkmark} \\
+            Task Vector & .01\,{\color{themecolor}\checkmark} & .46\,{\color{themecolor}\checkmark} & .13\,{\color{themecolor}\checkmark} & \underline{.92} & \underline{.95} & .48 & \underline{$-84.3$} \\
+            SatImp & \underline{.37} & \underline{.93} & \underline{.43} & \underline{1.00} & \underline{1.00} & .62 & \underline{$-100.0$} \\
+            UNDIAL & .02 & .64 & .16\,{\color{themecolor}\checkmark} & \underline{1.00} & \underline{1.00} & .53 & \underline{$-100.0$} \\
             \bottomrule
         \end{tabular}}
 
     \vspace{0.6em}
-    {\scriptsize\color{gray!45!black} Underlined: far below the ideal model on that metric.}
+    {\scriptsize {\color{themecolor}\checkmark} matches or beats the ideal model
+        \quad\ \underline{underlined} far below it}
 \end{frame}
 
 \begin{frame}{How Old Can the Checkpoint Be?}
@@ -1702,8 +1703,9 @@
         \path[use as bounding box] (-0.2,-4.2) rectangle (13.2,1.9);
 
         % ---- the search box
-        \node[anchor=west,inner sep=0pt] at (0.35,1.42)
-        {\includegraphics[width=1.9cm]{Figures/logos/google.pdf}};
+        \node[anchor=west,inner sep=0pt] at (0.35,1.40)
+        {\includegraphics[height=0.85cm]{Figures/logos/google-g.pdf}};
+        \node[anchor=west,font=\small,gray!35!black] at (1.35,1.40) {Search};
         \node[draw=gray!55,fill=white,thick,rounded corners=6pt,
             minimum width=7.4cm,minimum height=0.6cm,align=left,anchor=west]
         (sb) at (0.3,0.5) {\hspace{0.15cm}\textit{best laptop for a computer science student}};
@@ -1730,7 +1732,7 @@
         {The answer arrives \textbf{above} the links.
 
             \vspace{0.3em}
-            \textcolor{xattn}{\textbf{Nobody clicks any more.}}};
+            \textcolor{xattn}{\textbf{Fewer clicks.}}};
 
         \node[visible on=<2->,font=\scriptsize,text=gray!45!black,anchor=west] at (0.45,-3.85)
         {and search ads were paid \textbf{per click}};
@@ -1743,11 +1745,14 @@
 \begin{frame}{Subscriptions Are Not the Whole Answer}
     \centering
     \vspace{0.6em}
-    {\small ChatGPT was free. Claude Code was free. The bill still arrives.}
+    {\small ChatGPT was free. Claude Code was free. Serving them is not.}
 
     \vspace{1.0em}
-    \uncover<2->{\small Open-weight models keep pushing the price of a \textit{good enough}
-        model toward zero. A paywall is a fragile place to stand.}
+    \uncover<2->{\small And there are \textbf{free models} now, good enough for most of
+        what people ask.}
+
+    \vspace{0.5em}
+    \uncover<2->{\small If a competitor gives it away, a subscription is hard to defend.}
 
     \vspace{1.2em}
     \uncover<3->{%
@@ -1783,7 +1788,7 @@
 
 \begin{frame}{Where the Ad Enters}
     \centering
-    \includegraphics[width=0.80\textwidth]{Figures/ads/llma-arch.jpg}
+    \includegraphics[width=0.76\textwidth]{Figures/ads/llma-arch.jpg}
 
     \vspace{0.5em}
     {\small \textbf{Modification} writes the ad into the text.
@@ -1792,9 +1797,9 @@
         \textbf{Auction} picks the winner and the price.}
 
     \vspace{0.2em}
-    {\tiny\color{gray!50!black} Feizi, Hajiaghayi, \textbf{Rezaei}, Shin.
+    {\tiny\color{gray!50!black} Feizi, Hajiaghayi, \textbf{Rezaei}, Shin$^{\alpha\beta}$.
         \textit{Online Advertisements with LLMs: Opportunities and Challenges}.
-        ACM SIGecom Exchanges 2025.}
+        ACM SIGecom Exchanges 2025. \ {\color{gray!55}($^{\alpha\beta}$ alphabetical order)}}
 \end{frame}
 
 \begin{frame}{The Hard Parts}
@@ -1851,65 +1856,97 @@
         writes the next segment around it.}
 
     \vspace{0.2em}
-    {\tiny\color{gray!50!black} Hajiaghayi, Lahaie, \textbf{Rezaei}, Shin.
-        \textit{Ad Auctions for LLMs via Retrieval Augmented Generation}. NeurIPS 2024.}
+    {\tiny\color{gray!50!black} Hajiaghayi, Lahaie, \textbf{Rezaei}, Shin$^{\alpha\beta}$.
+        \textit{Ad Auctions for LLMs via Retrieval Augmented Generation}. NeurIPS 2024.
+        \ {\color{gray!55}($^{\alpha\beta}$ alphabetical order)}}
 \end{frame}
 
-\begin{frame}{What the Auction Buys You}
+\begin{frame}{How the Winner Is Picked}
     \centering
-    \vspace{0.3em}
-    \begin{columns}[c,onlytextwidth]
-        \column{0.52\textwidth}
-        \centering\small
-        \begin{tabular}{@{}l cccc@{}}
-            \toprule
-            Mechanism        & Welfare & Rev.  & Relev. & Min. \\
-            \midrule
-            Segment w/ repl. & .660    & .371  & .688   & .185 \\
-            Segment w/o repl.& .521    & .333  & .565   & .294 \\
-            Ignore relevance & .508    & .379  & .552   & .329 \\
-            Multi-allocation & .524    & .238  & .569   & .298 \\
-            \bottomrule
-        \end{tabular}
-
-        \vspace{0.5em}
-        {\scriptsize Four advertisers, three segments, 500 trials. Normalized.}
-
-        \column{0.44\textwidth}
-        \begin{itemize}\small
-            \item Ignoring relevance earns the most and serves the user the worst.
-            \item Repetition wins on welfare by handing every slot to one advertiser.
-            \item Truthful bidding is a best response throughout.
-        \end{itemize}
-    \end{columns}
+    \vspace{0.4em}
+    \begin{tcolorbox}[colback=themecolor!4,colframe=themecolor,arc=1.5mm,boxrule=0.9pt,
+            width=0.88\textwidth,left=8pt,right=8pt,top=5pt,bottom=5pt,
+            fonttitle=\bfseries\small,coltitle=white,colbacktitle=themecolor,
+            title=Segment auction]
+        \small
+        For each segment:\\[0.4em]
+        \hspace*{1.2em} score $\;s_i = \underbrace{q_i}_{\text{relevance}}\cdot
+        \underbrace{b_i}_{\text{bid}}\cdot\; e^{\varepsilon_i}$,
+        \quad $\varepsilon_i \sim \text{Gumbel}$\\[0.4em]
+        \hspace*{1.2em} the winner is $\arg\max_i s_i$\\[0.4em]
+        \hspace*{1.2em} it pays the \textbf{lowest bid that would still have won},
+        charged \textbf{per click}
+    \end{tcolorbox}
 
     \vspace{0.8em}
-    \uncover<2->{\small Give the model the \textbf{whole document} and it places the ads
-        better than any per-sentence rule: highest output quality of the five.}
+    \uncover<2->{\small The noise makes it a \textbf{lottery weighted by $q_i b_i$}:
+        a highly relevant ad can beat a higher bid.}
+
+    \vspace{0.5em}
+    \uncover<3->{\small The price is the second-price idea, so
+        \textcolor{themecolor}{\textbf{bidding your true value is a dominant strategy}}.}
+\end{frame}
+
+\begin{frame}{What the Mechanism Guarantees}
+    \vspace{0.5em}
+    \begin{itemize}\small\setlength\itemsep{0.7em}
+        \item \textbf{Truthful} (DSIC). No advertiser gains by misreporting its value.
+        \item \textbf{Individually rational}. Nobody is worse off for taking part.
+        \item \uncover<2->{\textbf{Maximal logarithmic social welfare}
+                  $\prod_i x_i^{\,v_i q_i}$ among independent segment auctions.}
+        \item \uncover<3->{A \textbf{log} welfare, not a sum. It rewards spreading
+                  allocation across advertisers rather than handing every segment to one,
+                  so efficiency and fairness come together.}
+    \end{itemize}
+
+    \vspace{0.9em}
+    \uncover<4->{\small Ignoring relevance earns more revenue and serves the user worse.}
+
+    \vspace{0.4em}
+    \uncover<4->{\small Giving the model the \textbf{whole document} yields the best output
+        quality of the five mechanisms tested.}
 \end{frame}
 
 \section{Conclusion}
 \begin{frame}{Conclusion}
-    % TODO
+    \vspace{0.5em}
+    {\small This thesis asks where a foundation model's knowledge comes from,
+        and what we can do once we know.}
+
+    \vspace{0.9em}
+    \begin{itemize}\small\setlength\itemsep{0.7em}
+        \item \textbf{Where knowledge lives.} Methods and heuristics for localizing a
+              concept inside a generative model, and for editing it in place.
+        \item \uncover<2->{\textbf{What the data did.} Tools for studying the effect of
+                    training data through machine unlearning: a benchmark that asks for
+                    recovery, and a method that reads the training history.}
+        \item \uncover<3->{\textbf{What it is all for.} Mechanisms for placing advertising
+                    inside a model's output, so these systems can pay for themselves.}
+    \end{itemize}
+
+    \vspace{0.9em}
+    \uncover<4->{\small A common thread:
+        \textcolor{themecolor}{\textbf{treat the model and its data as objects we can
+                inspect and change}}, not as a finished artifact.}
 \end{frame}
 
 \begin{frame}{Other Work: Interpretability and Unlearning}
     \vspace{-0.2em}
     {\scriptsize
         \begin{itemize}\setlength\itemsep{4pt}
-            \item Revisiting the Past: Data Unlearning with Model State History. \textit{ICLR 2026.}\\
+            \item Revisiting the Past: Data Unlearning with Model State History. \textcolor{xattn}{\textbf{ICLR 2026.}}\\
                   {\color{gray!45!black}\textbf{K. Rezaei}, M. Saberi, A. Ravichander$^*$, S. Feizi$^*$}
-            \item \RESTOR: Knowledge Recovery through Machine Unlearning. \textit{TMLR 2025.}\\
+            \item \RESTOR: Knowledge Recovery through Machine Unlearning. \textcolor{xattn}{\textbf{TMLR 2025.}}\\
                   {\color{gray!45!black}\textbf{K. Rezaei}, K. Chandu, S. Feizi, Y. Choi, F. Brahman, A. Ravichander}
-            \item Localizing Knowledge in Diffusion Transformers. \textit{NeurIPS 2025.}\\
+            \item Localizing Knowledge in Diffusion Transformers. \textcolor{xattn}{\textbf{NeurIPS 2025.}}\\
                   {\color{gray!45!black}A. Zarei, S. Basu, \textbf{K. Rezaei}, Z. Lin, S. Nag, S. Feizi}
-            \item On Mechanistic Knowledge Localization in Text-to-Image Generative Models. \textit{ICML 2024.}\\
+            \item On Mechanistic Knowledge Localization in Text-to-Image Generative Models. \textcolor{xattn}{\textbf{ICML 2024.}}\\
                   {\color{gray!45!black}S. Basu$^*$, \textbf{K. Rezaei}$^*$, R. Rossi, C. Zhao, V. Morariu, V. Manjunatha, S. Feizi}
-            \item PRIME: Prioritizing Interpretability in Failure Mode Extraction. \textit{ICLR 2024.}\\
+            \item PRIME: Prioritizing Interpretability in Failure Mode Extraction. \textcolor{xattn}{\textbf{ICLR 2024.}}\\
                   {\color{gray!45!black}\textbf{K. Rezaei}$^*$, M. Saberi$^*$, M. Moayeri, S. Feizi}
-            \item Text-To-Concept (and Back) via Cross-Model Alignment. \textit{ICML 2023.}\\
+            \item Text-To-Concept (and Back) via Cross-Model Alignment. \textcolor{xattn}{\textbf{ICML 2023.}}\\
                   {\color{gray!45!black}M. Moayeri$^*$, \textbf{K. Rezaei}$^*$, M. Sanjabi, S. Feizi}
-            \item Improving Compositional Attribute Binding in Text-to-Image Models. \textit{Preprint.}\\
+            \item Improving Compositional Attribute Binding in Text-to-Image Models. \textcolor{xattn}{\textbf{Preprint.}}\\
                   {\color{gray!45!black}A. Zarei$^*$, \textbf{K. Rezaei}$^*$, S. Basu, M. Saberi, M. Moayeri, P. Kattakinda, S. Feizi}
         \end{itemize}}
 \end{frame}
@@ -1919,22 +1956,22 @@
     {\scriptsize
         \textbf{Robustness}
         \begin{itemize}\setlength\itemsep{4pt}
-            \item Run-Off Election: Improved Provable Defense against Data Poisoning Attacks. \textit{ICML 2023.}\\
+            \item Run-Off Election: Improved Provable Defense against Data Poisoning Attacks. \textcolor{xattn}{\textbf{ICML 2023.}}\\
                   {\color{gray!45!black}\textbf{K. Rezaei}$^*$, K. Banihashem$^*$, A. Chegini, S. Feizi}
-            \item Robustness of AI-Image Detectors: Fundamental Limits and Practical Attacks. \textit{ICLR 2024.}\\
+            \item Robustness of AI-Image Detectors: Fundamental Limits and Practical Attacks. \textcolor{xattn}{\textbf{ICLR 2024.}}\\
                   {\color{gray!45!black}M. Saberi, V. S. Sadasivan, \textbf{K. Rezaei}, A. Kumar, A. Chegini, W. Wang, S. Feizi}
         \end{itemize}
 
         \vspace{0.6em}
         \textbf{Mechanism design}
         \begin{itemize}\setlength\itemsep{4pt}
-            \item Ad Auctions for LLMs via Retrieval Augmented Generation. \textit{NeurIPS 2024.}\\
+            \item Ad Auctions for LLMs via Retrieval Augmented Generation. \textcolor{xattn}{\textbf{NeurIPS 2024.}}\\
                   {\color{gray!45!black}M. Hajiaghayi, S. Lahaie, \textbf{K. Rezaei}, S. Shin}
-            \item Online Advertisements with LLMs: Opportunities and Challenges. \textit{SIGecom Exchanges 2025.}\\
+            \item Online Advertisements with LLMs: Opportunities and Challenges. \textcolor{xattn}{\textbf{SIGecom Exchanges 2025.}}\\
                   {\color{gray!45!black}S. Feizi, M. Hajiaghayi, \textbf{K. Rezaei}, S. Shin}
-            \item Multi-agent Delegated Search. \textit{EC 2023.}\\
+            \item Multi-agent Delegated Search. \textcolor{xattn}{\textbf{EC 2023.}}\\
                   {\color{gray!45!black}M. Hajiaghayi, \textbf{K. Rezaei}, S. Shin}
-            \item Regret Analysis of Repeated Delegated Choice. \textit{AAAI 2024.}\\
+            \item Regret Analysis of Repeated Delegated Choice. \textcolor{xattn}{\textbf{AAAI 2024.}}\\
                   {\color{gray!45!black}M. Hajiaghayi, M. Mahdavi, \textbf{K. Rezaei}, S. Shin}
         \end{itemize}}
 \end{frame}
@@ -1943,6 +1980,9 @@
     \vspace{0.6em}
     \centering
     \begin{tabular}{@{}>{\centering\arraybackslash}p{3.4cm}@{\hspace{0.8em}}p{6.9cm}@{}r@{}}
+        \logoat{umd-m.pdf}{0.85cm} & \small \textbf{Reliable AI Lab, University of Maryland}\newline
+        {\scriptsize\color{gray!45!black} Everything in this talk}
+                            & {\scriptsize\color{gray!45!black} since 2022}    \\[0.9em]
         \logoat{sig.png}{0.40cm}   & \small \textbf{Susquehanna International Group}\newline
         {\scriptsize\color{gray!45!black} Data selection for intra-day price prediction}
                             & {\scriptsize\color{gray!45!black} Summer 2026}   \\[0.9em]
@@ -1954,10 +1994,7 @@
                             & {\scriptsize\color{gray!45!black} Spring 2025}   \\[0.9em]
         \logoat{ai2.pdf}{0.31cm}   & \small \textbf{Allen Institute for AI}\newline
         {\scriptsize\color{gray!45!black} Data-level machine unlearning}
-                            & {\scriptsize\color{gray!45!black} 2024}          \\[0.9em]
-        \logoat{umd.pdf}{0.58cm}   & \small \textbf{Reliable AI Lab, University of Maryland}\newline
-        {\scriptsize\color{gray!45!black} Everything in this talk}
-                            & {\scriptsize\color{gray!45!black} since 2022}   \\
+                            & {\scriptsize\color{gray!45!black} 2024}          \\
     \end{tabular}
 \end{frame}
 
@@ -2004,8 +2041,10 @@
     \vfill
 \end{frame}
 
-\begin{frame}{References}
-    \printbibliography
+\nocite{*}
+\begin{frame}[allowframebreaks]{References}
+    \footnotesize
+    \printbibliography[heading=none]
 \end{frame}
 
 \end{document}
