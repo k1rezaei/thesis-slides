@@ -1786,6 +1786,20 @@
         \end{columns}}
 \end{frame}
 
+\begin{frame}{And Not Only in Text}
+    \centering
+    \vspace{0.6em}
+    \includegraphics[width=\textwidth]{Figures/ads/image-ads.jpg}
+
+    \vspace{0.8em}
+    {\small The same question applies to a \textbf{generated image}: the car in the answer
+        can be a particular car, the holiday a particular operator.}
+
+    \vspace{0.4em}
+    \uncover<2->{\small And it can be \textcolor{xattn}{\textbf{personalized}}, which is
+        where the privacy question starts.}
+\end{frame}
+
 \begin{frame}{Where the Ad Enters}
     \centering
     \includegraphics[width=0.76\textwidth]{Figures/ads/llma-arch.jpg}
@@ -1903,8 +1917,9 @@
     \uncover<4->{\small Ignoring relevance earns more revenue and serves the user worse.}
 
     \vspace{0.4em}
-    \uncover<4->{\small Giving the model the \textbf{whole document} yields the best output
-        quality of the five mechanisms tested.}
+    \uncover<4->{\small Measure how close the advertised answer stays to the
+        \textbf{original ad-free output}: allocating all three ads over the whole document
+        scores \textbf{0.715}, against \textbf{0.67--0.70} for the per-sentence rules.}
 \end{frame}
 
 \section{Conclusion}
@@ -1920,14 +1935,19 @@
         \item \uncover<2->{\textbf{What the data did.} Tools for studying the effect of
                     training data through machine unlearning: a benchmark that asks for
                     recovery, and a method that reads the training history.}
-        \item \uncover<3->{\textbf{What it is all for.} Mechanisms for placing advertising
-                    inside a model's output, so these systems can pay for themselves.}
+        \item \uncover<3->{\textbf{How it sustains itself.} Mechanism design for
+                    generative AI: auctions that place advertising inside a model's output,
+                    with the incentive guarantees such a market needs.}
     \end{itemize}
 
     \vspace{0.9em}
-    \uncover<4->{\small A common thread:
-        \textcolor{themecolor}{\textbf{treat the model and its data as objects we can
-                inspect and change}}, not as a finished artifact.}
+    \uncover<4->{%
+        \begin{tcolorbox}[colback=themecolor!7,colframe=themecolor,arc=1.5mm,boxrule=1pt,
+                width=\textwidth,halign=center,left=6pt,right=6pt,top=5pt,bottom=5pt]
+            \small\textbf{A common thread:
+                \textcolor{themecolor}{treat the model and its data as objects we can
+                    inspect and change}, not as a finished artifact.}
+        \end{tcolorbox}}
 \end{frame}
 
 \begin{frame}{Other Work: Interpretability and Unlearning}
