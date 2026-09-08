@@ -1700,15 +1700,14 @@
 \begin{frame}{The Click Is Disappearing}
     \centering
     \begin{tikzpicture}[font=\scriptsize]
-        \path[use as bounding box] (-0.2,-4.2) rectangle (13.2,1.9);
+        \path[use as bounding box] (-0.2,-4.2) rectangle (13.2,1.1);
 
         % ---- the search box
-        \node[anchor=west,inner sep=0pt] at (0.35,1.40)
-        {\includegraphics[height=0.85cm]{Figures/logos/google-g.pdf}};
-        \node[anchor=west,font=\small,gray!35!black] at (1.35,1.40) {Search};
         \node[draw=gray!55,fill=white,thick,rounded corners=6pt,
             minimum width=7.4cm,minimum height=0.6cm,align=left,anchor=west]
-        (sb) at (0.3,0.5) {\hspace{0.15cm}\textit{best laptop for a computer science student}};
+        (sb) at (0.3,0.5) {\hspace{0.75cm}\textit{best laptop for a computer science student}};
+        \node[anchor=west,inner sep=0pt] at (0.48,0.5)
+        {\includegraphics[height=0.38cm]{Figures/logos/google-g.pdf}};
 
         % ---- the AI overview panel
         \node[draw=themecolor,fill=themecolor!7,thick,rounded corners=3pt,
@@ -1998,8 +1997,8 @@
     \begin{tabular}{@{}>{\centering\arraybackslash}p{3.4cm}@{\hspace{0.8em}}p{6.9cm}@{}r@{}}
         \logoat{../logo/umd-seal.png}{0.92cm} & \small \textbf{Reliable AI Lab, University of Maryland}\newline
         {\scriptsize\color{gray!45!black} Everything in this talk}
-                            & {\scriptsize\color{gray!45!black} since 2022}    \\[0.9em]
-        \logoat{sig.png}{0.40cm}   & \small \textbf{Susquehanna International Group}\newline
+                            & {\scriptsize\color{gray!45!black} since 2022}    \\[1.8em]
+        \logoat[2.5cm]{sig.png}{0.40cm}   & \small \textbf{Susquehanna International Group}\newline
         {\scriptsize\color{gray!45!black} Data selection for intra-day price prediction}
                             & {\scriptsize\color{gray!45!black} Summer 2026}   \\[0.9em]
         \logoat{adobe.pdf}{0.28cm} & \small \textbf{Adobe Research}\newline
@@ -2044,7 +2043,7 @@
     \vspace{0.6em}
     {\footnotesize
         And my \textbf{father}, \textbf{mother} and \textbf{sister}, who carried me
-        through, and my friends, who kept the years grounded.}
+        through, and my \textbf{friends}, who kept the years grounded.}
 \end{frame}
 
 \begin{frame}
