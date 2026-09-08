@@ -1578,19 +1578,15 @@
 \end{frame}
 
 \begin{frame}{MSA on TOFU: Closer to Ideal}
-    \hfill{\scriptsize\color{gray!45!black} TOFU \texttt{forget10} $\;\cdot\;$
-        OLMo-2-7B, pretrained on $\sim$4T tokens}
-
-    \vspace{0.3em}
     \centering
-    \includegraphics[width=0.645\textwidth]{Figures/msa/tofu-table.jpg}
+    \vspace{0.4em}
+    \includegraphics[width=0.82\textwidth]{Figures/msa/tofu-table.jpg}
+
+    \vspace{0.6em}
+    {\small Forget 10\% of the TOFU authors; \textbf{Ideal} is trained on the rest.}
 
     \vspace{0.3em}
-    {\scriptsize Forget 10\% of the authors; \textbf{Ideal} is trained on the rest.\\
-        The subscript is what the checkpoint had seen.}
-
-    \vspace{0.4em}
-    {\scriptsize \textcolor{themecolor}{\textbf{Every baseline fails on some metric;
+    {\small \textcolor{themecolor}{\textbf{Every baseline fails on some metric;
                 no MSA variant does.}}}
 \end{frame}
 
@@ -1621,41 +1617,39 @@
 \end{frame}
 
 \begin{frame}{MSA on MUSE: The Data-Level Metrics}
-    \hfill{\scriptsize\color{gray!45!black} MUSE-Books $\;\cdot\;$ OLMo-2-7B}
-
-    \vspace{0.2em}
     \centering
-    {\scriptsize\textcolor{xattn}{\textbf{Shaded}}: membership inference.}
-
     \vspace{0.2em}
-    {\fontsize{7.4}{8.6}\selectfont
-        \begin{tabular}{@{}l c >{\columncolor{xattn!12}}c >{\columncolor{xattn!12}}c c >{\columncolor{xattn!12}}c@{}}
+    {\scriptsize
+        \begin{tabular}{@{}l cccc@{}}
             \toprule
-                                         & \makecell{Ext.\\Str.$\downarrow$}
-                                         & \makecell{\textsc{Min-k}\%\\$\downarrow$}
-                                         & \makecell{\textsc{Min-k}\%++\\$\downarrow$}
-                                         & \makecell{Know\\Mem$_r\uparrow$}
-                                         & \makecell{Priv\\Leak $\to 0$}                          \\
+                                        & \makecell{\textsc{Min-k}\%\\$\downarrow$}
+                                        & \makecell{\textsc{Min-k}\%++\\$\downarrow$}
+                                        & \makecell{Know\\Mem$_r\uparrow$}
+                                        & \makecell{Priv\\Leak $\to 0$}                \\
             \midrule
-            Target                       & .43 & 1.00 & 1.00 & .62 & $-100.0$                     \\
-            Ideal                        & .02 & .45  & .39  & .67 & $0.0$                        \\
+            Target                      & 1.00 & 1.00 & .62 & $-100.0$                 \\
+            Ideal                       & .45  & .39  & .67 & $0.0$                    \\
             \midrule
-            $\text{MSA}_{500\text{B}}$   & .01 & .14  & .09  & .51 & $56.4$                       \\
-            $\text{MSA}_{2207\text{B}}$  & .01 & .04  & .01  & .45 & $74.1$                       \\
-            $\text{MSA}_{3691\text{B}}$  & .02 & .30  & .21  & .63 & $27.6$                       \\
-            $\text{MSA}_{3859\text{B}}$  & .02 & .23  & .16  & .59 & $23.5$                       \\
-            $\text{MSA}_\text{last}$     & .02 & .37  & .22  & \textbf{.65} & \textbf{14.7}       \\
+            $\text{MSA}_{500\text{B}}$  & .14  & .09  & \cellcolor{gray!22}.51 & \cellcolor{gray!22}$56.4$             \\
+            $\text{MSA}_{2207\text{B}}$ & .04  & .01  & \cellcolor{gray!22}.45 & \cellcolor{gray!22}$74.1$             \\
+            $\text{MSA}_{3691\text{B}}$ & .30  & .21  & .63 & $27.6$                   \\
+            $\text{MSA}_{3859\text{B}}$ & .23  & .16  & .59 & $23.5$                   \\
+            $\text{MSA}_\text{last}$    & .37  & .22  & \textbf{.65} & $\mathbf{14.7}$ \\
             \midrule
-            NPO                          & .02 & 1.00 & .99  & .62 & $-99.9$                      \\
-            RMU                          & .01 & .55  & .47  & .64 & $-17.8$                      \\
-            GradDiff                     & .01 & .50  & .45  & .45 & $-9.5$                       \\
-            Task Vector                  & .01 & .92  & .95  & .48 & $-84.3$                      \\
+            NPO                         & \cellcolor{gray!22}1.00 & \cellcolor{gray!22}.99 & .62 & \cellcolor{gray!22}$-99.9$          \\
+            RMU                         & \cellcolor{gray!22}.55  & \cellcolor{gray!22}.47 & .64 & $-17.8$             \\
+            GradDiff                    & \cellcolor{gray!22}.50  & \cellcolor{gray!22}.45 & \cellcolor{gray!22}.45 & $-9.5$           \\
+            Task Vector                 & \cellcolor{gray!22}.92  & \cellcolor{gray!22}.95 & \cellcolor{gray!22}.48 & \cellcolor{gray!22}$-84.3$       \\
             \bottomrule
         \end{tabular}}
 
+    \vspace{0.4em}
+    {\scriptsize\color{gray!45!black} Shaded: outside the top five on that metric.}
+
     \vspace{0.3em}
-    \uncover<2->{\scriptsize Early checkpoints \textbf{over-unlearn}: retain knowledge falls
-        and \textsc{PrivLeak} overshoots. The closest checkpoint balances both.}
+    \uncover<2->{\small The three closest checkpoints are shaded
+        \textcolor{themecolor}{\textbf{nowhere}}. Early ones over-unlearn: retained
+        knowledge falls and \textsc{PrivLeak} overshoots.}
 \end{frame}
 
 \begin{frame}{How Old Can the Checkpoint Be?}
