@@ -287,25 +287,29 @@
 \makeatother
 
 % Recurring roadmap slide: 3 boxes, one highlighted per occurrence.
+% Each box links to the start of its part; \roadmaptarget{<key>} marks the landing frame.
 % Usage: \roadmap{1|2|3}
-\newcommand{\rmboxH}[1]{%
+\newcommand{\roadmaptarget}[1]{\hypertarget{#1}{}}
+\newcommand{\rmboxH}[2]{%
     \begin{tcolorbox}[colback=themecolor,colframe=themecolor,coltext=white,boxrule=0pt,arc=2mm,valign=center,height=2.8cm]
-        \centering\bfseries #1
+        \centering\bfseries
+        {\hypersetup{linkcolor=white}\hyperlink{#1}{#2}}
     \end{tcolorbox}%
 }
-\newcommand{\rmboxN}[1]{%
+\newcommand{\rmboxN}[2]{%
     \begin{tcolorbox}[colback=white,colframe=gray!40,coltext=gray!55,boxrule=1pt,arc=2mm,valign=center,height=2.8cm]
-        \centering #1
+        \centering
+        {\hypersetup{linkcolor=gray!55}\hyperlink{#1}{#2}}
     \end{tcolorbox}%
 }
 \newcommand{\roadmap}[1]{%
     \begin{columns}[T,onlytextwidth]
         \column{0.32\textwidth}
-        \ifnum#1=1 \rmboxH{Research Theme}\else\rmboxN{Research Theme}\fi
+        \ifnum#1=1 \rmboxH{go:theme}{Research Theme}\else\rmboxN{go:theme}{Research Theme}\fi
         \column{0.32\textwidth}
-        \ifnum#1=2 \rmboxH{Knowledge Localization \& Model Editing}\else\rmboxN{Knowledge Localization \& Model Editing}\fi
+        \ifnum#1=2 \rmboxH{go:localize}{Knowledge Localization \& Model Editing}\else\rmboxN{go:localize}{Knowledge Localization \& Model Editing}\fi
         \column{0.32\textwidth}
-        \ifnum#1=3 \rmboxH{Data Interpretability \& Machine Unlearning}\else\rmboxN{Data Interpretability \& Machine Unlearning}\fi
+        \ifnum#1=3 \rmboxH{go:unlearn}{Data Interpretability \& Machine Unlearning}\else\rmboxN{go:unlearn}{Data Interpretability \& Machine Unlearning}\fi
     \end{columns}%
 }
 
