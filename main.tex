@@ -58,7 +58,7 @@
     \end{columns}
 \end{frame}
 
-\begin{frame}{Text-to-Image: Diffusion}
+\begin{frame}{Text-to-Image: Diffusion Process}
     \begin{center}
         \begin{tabular}{@{}c@{\;}c@{\;}c@{\;}c@{\;}c@{\;}c@{\;}c@{}}
             \dstep{x3}     & {\color{themecolor}$\longrightarrow$} &
@@ -633,14 +633,6 @@
 \end{frame}
 
 
-\begin{frame}{Neuron-Level Editing}
-    % PLACEHOLDER: neuron-level analysis goes here.
-    \centering
-    \vfill
-    {\color{gray!50}\small[ placeholder ]}
-    \vfill
-\end{frame}
-
 \begin{frame}{Two Loose Ends}
     \centering
     \uncover<1->{%
@@ -791,32 +783,35 @@
 
 \begin{frame}{Localizing by Attention Contribution}
     \centering
+    \vspace{-0.2em}
     How hard does text token $\mathbf{x}_j$ \textbf{push} on image token $\mathbf{y}_i$
     in \textbf{this block}?
 
-    \begin{minipage}[c][1.45cm][c]{\textwidth}
+    \begin{minipage}[c][1.30cm][c]{\textwidth}
         \centering
         \only<1>{$\displaystyle
                 \text{cont}_{i,j} \;=\; \big\| \text{attn}_{i,j}\; \mathbf{v}_j\, W_o \big\|_2 $}%
-        \only<2->{$\displaystyle
+        \only<2>{$\displaystyle
                 \text{cont}_{i,j} \;=\; \Big\| \sum_{h=1}^{H} \text{attn}^h_{i,j}\;
-                \mathbf{v}^h_j\, W^h_o \Big\|_2 $}
+                \mathbf{v}^h_j\, W^h_o \Big\|_2 $}%
+        \only<3->{$\displaystyle
+                \text{cont}_{j} \;=\; \frac{1}{I} \sum_{i=1}^{I} \text{cont}_{i,j} $}
     \end{minipage}
 
     \vspace{-0.3em}
-    \uncover<2->{\small Attention runs $H$ heads in parallel, so add their writes first.}
+    \begin{minipage}[c][0.68cm][c]{\textwidth}
+        \centering
+        \only<2>{\small Attention runs $H$ heads in parallel, so add their writes first.}%
+        \only<3->{\small Averaged over all $I$ image tokens:
+            how much $\mathbf{x}_j$ writes into the
+            \textcolor{themecolor}{\textbf{image}} at this layer.}
+    \end{minipage}
 
-    \vspace{0.3em}
     \begin{columns}[c,onlytextwidth]
         \column{0.64\textwidth}
-        \uncover<3->{\small
-            Summing over image tokens $i$ gives how much $\mathbf{x}_j$ writes into the
-            \textbf{whole image} at this layer.}
-
-        \vspace{0.5em}
         \uncover<4->{\small
             For a meaningful $\mathbf{x}_j$ (an artist, an object, a character),
-            rank the layers by that score and keep the
+            rank the layers by $\text{cont}_j$ and keep the
             \textcolor{themecolor}{\textbf{top contributors}}.}
 
         \column{0.32\textwidth}
@@ -1017,19 +1012,6 @@
     full tuning drifts back to the photos.}
 \end{frame}
 
-\begin{frame}{Personalization: Better on Every Metric}
-    \centering
-    \includegraphics[width=\textwidth]{Figures/dit/dreambooth-quant.jpg}
-
-    \vspace{0.5em}
-    \begin{itemize}\small
-        \item Higher prompt alignment on the customized subject.
-        \item Surrounding classes (Husky, Golden Retriever) keep their identity.
-        \item FID holds flat while full fine-tuning degrades with more steps.
-        \item All of it while touching \textbf{9 of 28 blocks}.
-    \end{itemize}
-\end{frame}
-
 \begin{frame}{Unlearning: A Target and an Anchor}
     \centering
     {\small The \textbf{anchor} is a neutral stand-in: \textit{``a painting''} for a
@@ -1041,19 +1023,6 @@
 
     \vspace{0.5em}
     {\small The style is gone, the scene the prompt asked for is not.}
-\end{frame}
-
-\begin{frame}{Unlearning: Same Erasure, Less Collateral}
-    \centering
-    \includegraphics[width=0.86\textwidth]{Figures/dit/unlearning-quant.jpg}
-
-    \vspace{0.5em}
-    \begin{itemize}\small
-        \item Target style erased as fast as full fine-tuning.
-        \item Surrounding artists keep their identity.
-        \item Alignment with the anchor is preserved.
-        \item FID degrades far less; only \textbf{5 of 28 blocks} move.
-    \end{itemize}
 \end{frame}
 
 \section{Unlearn}
@@ -2053,6 +2022,34 @@
     \vspace{1.2em}
     {\Large\color{gray!35!black} Questions?}
     \vfill
+\end{frame}
+
+\appendix
+
+\begin{frame}{Personalization: Better on Every Metric}
+    \centering
+    \includegraphics[width=\textwidth]{Figures/dit/dreambooth-quant.jpg}
+
+    \vspace{0.5em}
+    \begin{itemize}\small
+        \item Higher prompt alignment on the customized subject.
+        \item Surrounding classes (Husky, Golden Retriever) keep their identity.
+        \item FID holds flat while full fine-tuning degrades with more steps.
+        \item All of it while touching \textbf{9 of 28 blocks}.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Unlearning: Same Erasure, Less Collateral}
+    \centering
+    \includegraphics[width=0.86\textwidth]{Figures/dit/unlearning-quant.jpg}
+
+    \vspace{0.5em}
+    \begin{itemize}\small
+        \item Target style erased as fast as full fine-tuning.
+        \item Surrounding artists keep their identity.
+        \item Alignment with the anchor is preserved.
+        \item FID degrades far less; only \textbf{5 of 28 blocks} move.
+    \end{itemize}
 \end{frame}
 
 \nocite{*}
