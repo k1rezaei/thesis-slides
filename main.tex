@@ -798,14 +798,15 @@
                 \text{cont}_{i,j} \;=\; \Big\| \sum_{h=1}^{H} \text{attn}^h_{i,j}\;
                 \mathbf{v}^h_j\, W^h_o \Big\|_2 $}%
         \only<3->{$\displaystyle
-                \text{cont}_{j} \;=\; \frac{1}{I} \sum_{i=1}^{I} \text{cont}_{i,j} $}
+                \text{cont}_{j} \;=\; \frac{1}{|\text{Image Tokens}|}
+                \sum_{i} \text{cont}_{i,j} $}
     \end{minipage}
 
     \vspace{-0.3em}
     \begin{minipage}[c][0.68cm][c]{\textwidth}
         \centering
         \only<2>{\small Attention runs $H$ heads in parallel, so add their writes first.}%
-        \only<3->{\small Averaged over all $I$ image tokens:
+        \only<3->{\small Averaged over all image tokens:
             how much $\mathbf{x}_j$ writes into the
             \textcolor{themecolor}{\textbf{image}} at this layer.}
     \end{minipage}
