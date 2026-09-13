@@ -1131,7 +1131,7 @@
             arx/.style={->,>=stealth,xattn,semithick},
             lbl/.style={font=\tiny,text=gray!50!black,fill=white,inner sep=1.5pt},
         ]
-        \path[use as bounding box] (-1.0,-3.0) rectangle (12.4,2.9);
+        \path[use as bounding box] (-1.0,-2.4) rectangle (12.4,2.9);
 
         % ---- the dataset
         \node[draw=themecolor,fill=white,thick,rounded corners=2pt,
@@ -1162,14 +1162,10 @@
         \draw[<->,>=stealth,xattn,very thick,visible on=<2->] (thu) -- (thr);
         \node[visible on=<2->,font=\scriptsize,align=center,text=xattn] at (8.9,0.15)
         {should be\\ indistinguishable};
-
-        \node[visible on=<3->,font=\small,align=center] at (4.3,-2.55)
-        {The target is not a model that stays quiet.\\[0.2em]
-            It is the model that \textcolor{themecolor}{\textbf{never saw the data}}.};
     \end{tikzpicture}
 
-    \vspace{-0.2em}
-    \uncover<4->{\small \textbf{The problem.} Get from $\theta_\mathcal{D}$ to something
+    \vspace{0.6em}
+    \uncover<3->{\small \textbf{The problem.} Get from $\theta_\mathcal{D}$ to something
         close to $\theta_\text{ideal}$, \textcolor{themecolor}{\textbf{without retraining}}.}
 \end{frame}
 
