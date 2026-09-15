@@ -320,7 +320,6 @@
 \newcommand{\genicon}[1]{\raisebox{-0.28\height}{\includegraphics[height=1.2em]{Figures/genai/icons/#1}}}
 \newcommand{\genyear}[1]{{\scriptsize\color{gray!45!black}#1}}
 \newcommand{\genmaker}[1]{{\scriptsize\color{gray!50!black}#1}}
-\newcommand{\genparam}[1]{\hspace{0.7em}{\scriptsize\color{themecolor}#1}}
 \newtcolorbox{genbox}[1]{colback=white,colframe=themecolor,coltitle=white,
     colbacktitle=themecolor,title=#1,fonttitle=\bfseries\small,
     arc=1.5mm,boxrule=0.8pt,left=3pt,right=3pt,top=3pt,bottom=3pt}
@@ -337,7 +336,20 @@
         \fill[themecolor] (3.5,{0.5+2.5*exp(-1.5*3.05)}) circle (0.30);
     }%
 }
-\newcommand{\lblarch}{{\color{themecolor}\large\faSitemap}}
+% Hierarchy icon, drawn to the same stroke weight as the loss curve.
+\newcommand{\lblarch}{%
+    \tikz[baseline=0.62ex,scale=0.095,line cap=round,line join=round]{
+        \draw[themecolor,line width=0.55pt] (1.9,2.75) -- (1.9,1.55);
+        \draw[themecolor,line width=0.55pt] (0.45,1.55) -- (3.35,1.55);
+        \draw[themecolor,line width=0.55pt] (0.45,1.55) -- (0.45,0.55);
+        \draw[themecolor,line width=0.55pt] (3.35,1.55) -- (3.35,0.55);
+        \draw[themecolor,line width=0.55pt] (1.9,1.55) -- (1.9,0.55);
+        \fill[themecolor] (1.9,2.75) circle (0.34);
+        \fill[themecolor] (0.45,0.55) circle (0.34);
+        \fill[themecolor] (1.9,0.55) circle (0.34);
+        \fill[themecolor] (3.35,0.55) circle (0.34);
+    }%
+}
 
 % Internship logo, scaled to fit a fixed box whatever its aspect ratio.
 % Internship logo. Heights are tuned per mark so the lettering reads at one size;
