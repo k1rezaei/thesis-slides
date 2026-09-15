@@ -377,8 +377,13 @@
     \end{tcolorbox}}
 
 \newcommand{\logoat}[3][3.3cm]{\adjustbox{max width=#1,max height=#3,valign=c}{\includegraphics{Figures/logos/#2}}}
-% Company mark set on the text's optical centre, for the experience slide.
-\newcommand{\logoinline}[3][1.2cm]{%
+% Company mark centred in a fixed invisible disc, set on the text's optical centre.
+\newcommand{\logocirc}[3][1.2cm]{%
     \raisebox{0.5ex}{\raisebox{-0.5\height}{%
-            \adjustbox{max width=#1,max height=#3}{\includegraphics{Figures/logos/#2}}}}%
+            \tikz[baseline=-0.40cm]{
+                \node[circle,draw=none,fill=none,minimum size=0.80cm,
+                    inner sep=0pt] (c) at (0,0) {};
+                \node at (c) {\adjustbox{max width=#1,max height=#3}%
+                    {\includegraphics{Figures/logos/#2}}};
+            }}}%
 }
