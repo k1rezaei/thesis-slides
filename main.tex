@@ -28,15 +28,15 @@
         \begin{genbox}{Text-to-Image Models}
             \footnotesize
             \renewcommand{\arraystretch}{1.22}
-            \begin{tabular}{@{}l@{\;}c@{\;}l@{}}
-                \genyear{2022} & \genicon{openai.pdf}      & \textbf{\dalle{} 2} \genmaker{-- OpenAI}          \\
-                \genyear{2022} & \genicon{google.pdf}      & \textbf{Imagen} \genmaker{-- Google}              \\
-                \genyear{2022} & \genicon{stabilityai.png} & \textbf{Stable Diffusion} \genmaker{-- Stability} \\
-                \genyear{2022} & \genicon{midjourney.pdf}  & \textbf{Midjourney}                                \\
-                \genyear{2023} & \genicon{stabilityai.png} & \textbf{SDXL} \genmaker{-- Stability}             \\
-                \genyear{2023} & \genicon{openai.pdf}      & \textbf{\dalle{} 3} \genmaker{-- OpenAI}          \\
-                \genyear{2024} & \genicon{stabilityai.png} & \textbf{Stable Diffusion 3} \genmaker{-- Stability} \\
-                \genyear{2024} & \genicon{google.pdf}      & \textbf{Imagen 3} \genmaker{-- Google}            \\
+            \begin{tabular}{@{}l@{\;}c@{\;}l@{\extracolsep{\fill}}r@{}}
+                \genyear{2022} & \genicon{openai.pdf} & \textbf{\dalle{} 2} \genmaker{-- OpenAI} & \genparam{3.5B} \\
+                \genyear{2022} & \genicon{google.pdf} & \textbf{Imagen} \genmaker{-- Google} & \genparam{3B} \\
+                \genyear{2022} & \genicon{stabilityai.png} & \textbf{Stable Diffusion} \genmaker{-- Stability} & \genparam{0.9B} \\
+                \genyear{2022} & \genicon{midjourney.pdf} & \textbf{Midjourney} & \genparam{--} \\
+                \genyear{2023} & \genicon{stabilityai.png} & \textbf{SDXL} \genmaker{-- Stability} & \genparam{2.6B} \\
+                \genyear{2023} & \genicon{openai.pdf} & \textbf{\dalle{} 3} \genmaker{-- OpenAI} & \genparam{--} \\
+                \genyear{2024} & \genicon{stabilityai.png} & \textbf{Stable Diffusion 3} \genmaker{-- Stability} & \genparam{8B} \\
+                \genyear{2024} & \genicon{google.pdf} & \textbf{Imagen 3} \genmaker{-- Google} & \genparam{--} \\
             \end{tabular}
         \end{genbox}
 
@@ -44,18 +44,23 @@
         \begin{genbox}{Large Language Models}
             \footnotesize
             \renewcommand{\arraystretch}{1.22}
-            \begin{tabular}{@{}l@{\;}c@{\;}l@{}}
-                \genyear{2022} & \genicon{openai.pdf}       & \textbf{ChatGPT} \genmaker{-- OpenAI}     \\
-                \genyear{2023} & \genicon{openai.pdf}       & \textbf{GPT-4} \genmaker{-- OpenAI}       \\
-                \genyear{2023} & \genicon{anthropic.pdf}    & \textbf{Claude} \genmaker{-- Anthropic}   \\
-                \genyear{2023} & \genicon{meta.pdf}         & \textbf{Llama 2} \genmaker{-- Meta}       \\
-                \genyear{2023} & \genicon{googlegemini.pdf} & \textbf{Gemini} \genmaker{-- Google}      \\
-                \genyear{2024} & \genicon{meta.pdf}         & \textbf{Llama 3} \genmaker{-- Meta}       \\
-                \genyear{2025} & \genicon{deepseek.pdf}     & \textbf{DeepSeek-R1} \genmaker{-- DeepSeek} \\
-                \genyear{2025} & \genicon{openai.pdf}       & \textbf{GPT-5} \genmaker{-- OpenAI}       \\
+            \begin{tabular}{@{}l@{\;}c@{\;}l@{\extracolsep{\fill}}r@{}}
+                \genyear{2022} & \genicon{openai.pdf} & \textbf{ChatGPT} \genmaker{-- OpenAI} & \genparam{175B} \\
+                \genyear{2023} & \genicon{openai.pdf} & \textbf{GPT-4} \genmaker{-- OpenAI} & \genparam{--} \\
+                \genyear{2023} & \genicon{anthropic.pdf} & \textbf{Claude} \genmaker{-- Anthropic} & \genparam{--} \\
+                \genyear{2023} & \genicon{meta.pdf} & \textbf{Llama 2} \genmaker{-- Meta} & \genparam{70B} \\
+                \genyear{2023} & \genicon{googlegemini.pdf} & \textbf{Gemini} \genmaker{-- Google} & \genparam{--} \\
+                \genyear{2024} & \genicon{meta.pdf} & \textbf{Llama 3} \genmaker{-- Meta} & \genparam{405B} \\
+                \genyear{2025} & \genicon{deepseek.pdf} & \textbf{DeepSeek-R1} \genmaker{-- DeepSeek} & \genparam{671B} \\
+                \genyear{2025} & \genicon{openai.pdf} & \textbf{GPT-5} \genmaker{-- OpenAI} & \genparam{--} \\
             \end{tabular}
         \end{genbox}
     \end{columns}
+
+    \vspace{0.6em}
+    \centering
+    {\scriptsize\color{gray!45!black} Parameter counts are the largest released size;
+        \textbf{--} where not disclosed.}
 \end{frame}
 
 \begin{frame}{Text-to-Image: Diffusion Process}

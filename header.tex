@@ -320,6 +320,7 @@
 \newcommand{\genicon}[1]{\raisebox{-0.28\height}{\includegraphics[height=1.2em]{Figures/genai/icons/#1}}}
 \newcommand{\genyear}[1]{{\scriptsize\color{gray!45!black}#1}}
 \newcommand{\genmaker}[1]{{\scriptsize\color{gray!50!black}#1}}
+\newcommand{\genparam}[1]{\hspace{0.7em}{\scriptsize\color{themecolor}#1}}
 \newtcolorbox{genbox}[1]{colback=white,colframe=themecolor,coltitle=white,
     colbacktitle=themecolor,title=#1,fonttitle=\bfseries\small,
     arc=1.5mm,boxrule=0.8pt,left=3pt,right=3pt,top=3pt,bottom=3pt}
@@ -329,11 +330,11 @@
 % Icon labels replacing the "Train:" / "Architecture:" captions.
 % Descending training-loss curve, used in place of a "Train:" caption.
 \newcommand{\lbltrain}{%
-    \tikz[baseline=-0.55ex,scale=0.12,line cap=round,line join=round]{
-        \draw[themecolor,line width=1.5pt] (0,3.0) -- (0,0) -- (3.8,0);
-        \draw[themecolor,line width=1.8pt] plot[smooth,domain=0.45:3.5,samples=50]
+    \tikz[baseline=0.62ex,scale=0.095,line cap=round,line join=round]{
+        \draw[themecolor,line width=0.55pt] (0,3.0) -- (0,0) -- (3.8,0);
+        \draw[themecolor,line width=0.9pt] plot[smooth,domain=0.45:3.5,samples=50]
         (\x, {0.5+2.5*exp(-1.5*(\x-0.45))});
-        \fill[themecolor] (3.5,{0.5+2.5*exp(-1.5*3.05)}) circle (0.34);
+        \fill[themecolor] (3.5,{0.5+2.5*exp(-1.5*3.05)}) circle (0.30);
     }%
 }
 \newcommand{\lblarch}{{\color{themecolor}\large\faSitemap}}
