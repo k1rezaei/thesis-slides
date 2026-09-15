@@ -170,6 +170,12 @@
 \definecolor{xattn}{RGB}{193,72,38}
 % Third accent, used only for the closing statement.
 \definecolor{closing}{RGB}{16,104,99}
+% Brand colours for the experience marks, sampled from the logos themselves.
+\definecolor{brandumd}{RGB}{224,58,62}
+\definecolor{brandsig}{RGB}{0,86,180}
+\definecolor{brandadobe}{RGB}{250,15,0}
+\definecolor{brandgoogle}{RGB}{66,133,244}
+\definecolor{brandai2}{RGB}{240,72,156}
 \mode<presentation>
 {
     \usetheme{Madrid}      % or try Darmstadt, Madrid, Warsaw, ...
@@ -377,12 +383,13 @@
     \end{tcolorbox}}
 
 \newcommand{\logoat}[3][3.3cm]{\adjustbox{max width=#1,max height=#3,valign=c}{\includegraphics{Figures/logos/#2}}}
-% Company mark centred in a fixed invisible disc, set on the text's optical centre.
-\newcommand{\logocirc}[3][1.2cm]{%
+% Company mark in a ring of its own brand colour, set on the text's optical centre.
+% #1 = max width of the mark, #2 = file, #3 = max height, #4 = ring colour
+\newcommand{\logocirc}[4][1.2cm]{%
     \raisebox{0.5ex}{\raisebox{-0.5\height}{%
-            \tikz[baseline=-0.40cm]{
-                \node[circle,draw=none,fill=none,minimum size=0.80cm,
-                    inner sep=0pt] (c) at (0,0) {};
+            \tikz[baseline=-0.46cm]{
+                \node[circle,draw=#4,fill=#4!6,line width=0.6pt,
+                    minimum size=0.92cm,inner sep=0pt] (c) at (0,0) {};
                 \node at (c) {\adjustbox{max width=#1,max height=#3}%
                     {\includegraphics{Figures/logos/#2}}};
             }}}%
