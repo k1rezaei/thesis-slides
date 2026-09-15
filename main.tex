@@ -210,6 +210,9 @@
         \node[inner sep=0pt,draw=themecolor,line width=0.7pt] (img) at (10.6,1.0)
         {\includegraphics[width=2.3cm]{Figures/localize/gen-vangogh.jpg}};
         \draw[ar] (eout) -- node[above,font=\tiny,gray!50!black] {$\times T$} (img);
+        \node[anchor=north,font=\tiny,align=center,text width=2.9cm,
+            text=gray!45!black] at ([yshift=-0.12cm]img.south)
+        {\textit{``A house in the style of Van Gogh''}};
 
         % text enters only through cross-attention
         \node[visible on=<2->,draw=xattn,fill=xattn!7,thick,rounded corners=1.5pt,
@@ -1924,6 +1927,8 @@
         \end{tcolorbox}}
 \end{frame}
 
+\backmatterstart
+
 \begin{frame}{Other Work: Interpretability and Unlearning}
     \vspace{-0.2em}
     {\scriptsize
@@ -2026,6 +2031,9 @@
     {\Huge\color{themecolor}\textbf{Thank you}}
 
     \vspace{1.2em}
+    {\Large\color{gray!35!black} for your attention}
+
+    \vspace{1.6em}
     {\Large\color{gray!35!black} Questions?}
     \vfill
 \end{frame}
@@ -2064,4 +2072,5 @@
     \printbibliography[heading=none]
 \end{frame}
 
+\backmatterend
 \end{document}

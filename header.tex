@@ -201,7 +201,7 @@
         \usebeamerfont{author in head/foot}\color{white}\insertshortauthor
     \end{beamercolorbox}%
     \begin{beamercolorbox}[wd=.2\paperwidth,ht=2.25ex,dp=1ex,right,rightskip=2ex]{date in head/foot}%
-        \usebeamerfont{date in head/foot}\color{white}\insertframenumber/\inserttotalframenumber
+        \usebeamerfont{date in head/foot}\color{white}\framenumtext
     \end{beamercolorbox}}%
     \vskip0pt%
 }
@@ -291,6 +291,15 @@
     \vfill
 }
 \makeatother
+
+% Frame number in the footline; blanked for the back matter.
+\newcommand{\framenumtext}{\insertframenumber/\inserttotalframenumber}
+\newcounter{finalframe}
+\newcommand{\backmatterstart}{%
+    \setcounter{finalframe}{\value{framenumber}}%
+    \renewcommand{\framenumtext}{}%
+}
+\newcommand{\backmatterend}{\setcounter{framenumber}{\value{finalframe}}}
 
 % Recurring roadmap slide: three stations on a road, the current one lit.
 % Each station links to the start of its part; \roadmaptarget{<key>} marks the landing frame.
@@ -387,9 +396,9 @@
 % #1 = max width of the mark, #2 = file, #3 = max height, #4 = ring colour
 \newcommand{\logocirc}[4][1.2cm]{%
     \raisebox{0.5ex}{\raisebox{-0.5\height}{%
-            \tikz[baseline=-0.46cm]{
-                \node[circle,draw=#4,fill=#4!6,line width=0.6pt,
-                    minimum size=0.92cm,inner sep=0pt] (c) at (0,0) {};
+            \tikz[baseline=-0.35cm]{
+                \node[circle,draw=#4,fill=#4!6,line width=0.55pt,
+                    minimum size=0.70cm,inner sep=0pt] (c) at (0,0) {};
                 \node at (c) {\adjustbox{max width=#1,max height=#3}%
                     {\includegraphics{Figures/logos/#2}}};
             }}}%
