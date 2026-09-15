@@ -379,9 +379,9 @@
 \newcommand{\logoat}[3][3.3cm]{\adjustbox{max width=#1,max height=#3,valign=c}{\includegraphics{Figures/logos/#2}}}
 % Company mark set inside a ring, for the experience slide.
 \newcommand{\logocirc}[2]{%
-    \tikz[baseline=-0.55ex]{
-        \node[circle,draw=gray!35,fill=white,line width=0.7pt,
-            minimum size=0.92cm,inner sep=0pt] (c) at (0,0) {};
+    \tikz[baseline=0pt]{
+        \node[circle,draw=gray!35,fill=white,line width=0.6pt,
+            minimum size=0.74cm,inner sep=0pt] (c) at (0,0) {};
         \node at (c) {\adjustbox{max width=#2,max height=#2}{\includegraphics{Figures/logos/#1}}};
     }%
 }
