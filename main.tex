@@ -617,7 +617,9 @@
 
 \begin{frame}{The Edit Leaves Everything Else Alone}
     \centering
-    \small 320 prompts from MS-COCO, unrelated to the edit.
+    \small 320 prompts from MS-COCO, unrelated to the edit.\\
+    {\scriptsize\color{gray!45!black} DiffQuickFix: the prior closed-form method,
+        which edits the \textbf{text encoder} instead.}
 
     \vspace{0.6em}
     \begin{table}
@@ -628,6 +630,8 @@
             Model                     & style-edited model & object-edited model \\
             \midrule
             SD-v1.5                   & 30.04              & 30.04               \\
+            \midrule
+            DiffQuickFix              & 29.61              & 29.32               \\
             \textsc{LocoEdit}         & \textbf{29.99}     & \textbf{29.40}      \\
             \bottomrule
         \end{tabular}
