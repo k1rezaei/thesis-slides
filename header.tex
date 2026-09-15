@@ -286,31 +286,39 @@
 }
 \makeatother
 
-% Recurring roadmap slide: 3 boxes, one highlighted per occurrence.
-% Each box links to the start of its part; \roadmaptarget{<key>} marks the landing frame.
+% Recurring roadmap slide: three stations on a road, the current one lit.
+% Each station links to the start of its part; \roadmaptarget{<key>} marks the landing frame.
 % Usage: \roadmap{1|2|3}
 \newcommand{\roadmaptarget}[1]{\hypertarget{#1}{}}
-\newcommand{\rmboxH}[2]{%
-    \begin{tcolorbox}[colback=themecolor,colframe=themecolor,coltext=white,boxrule=0pt,arc=2mm,valign=center,height=2.8cm]
-        \centering\bfseries
-        {\hypersetup{linkcolor=white}\hyperlink{#1}{#2}}
-    \end{tcolorbox}%
-}
-\newcommand{\rmboxN}[2]{%
-    \begin{tcolorbox}[colback=white,colframe=gray!40,coltext=gray!55,boxrule=1pt,arc=2mm,valign=center,height=2.8cm]
-        \centering
-        {\hypersetup{linkcolor=gray!55}\hyperlink{#1}{#2}}
-    \end{tcolorbox}%
+\newcommand{\rmstation}[4]{%
+    % #1 = x, #2 = index, #3 = link target, #4 = label
+    \ifnum\rmcur=#2
+        \draw[themecolor!18,line width=0pt,fill=themecolor!12] (#1,0) circle (0.78);
+        \node[circle,fill=themecolor,draw=white,line width=1.6pt,text=white,
+            font=\bfseries\large,minimum size=1.05cm,inner sep=0pt] at (#1,0) {#2};
+        \node[anchor=north,align=center,text width=4.1cm,font=\small\bfseries,
+            text=themecolor] at (#1,-1.05)
+        {\hypersetup{linkcolor=themecolor}\hyperlink{#3}{#4}};
+    \else
+        \node[circle,fill=white,draw=gray!45,line width=1pt,text=gray!55,
+            font=\bfseries,minimum size=0.78cm,inner sep=0pt] at (#1,0) {#2};
+        \node[anchor=north,align=center,text width=4.1cm,font=\small,
+            text=gray!45!black] at (#1,-0.92)
+        {\hypersetup{linkcolor=gray!45!black}\hyperlink{#3}{#4}};
+    \fi
 }
 \newcommand{\roadmap}[1]{%
-    \begin{columns}[T,onlytextwidth]
-        \column{0.32\textwidth}
-        \ifnum#1=1 \rmboxH{go:theme}{Research Theme}\else\rmboxN{go:theme}{Research Theme}\fi
-        \column{0.32\textwidth}
-        \ifnum#1=2 \rmboxH{go:localize}{Knowledge Localization \& Model Editing}\else\rmboxN{go:localize}{Knowledge Localization \& Model Editing}\fi
-        \column{0.32\textwidth}
-        \ifnum#1=3 \rmboxH{go:unlearn}{Data Interpretability \& Machine Unlearning}\else\rmboxN{go:unlearn}{Data Interpretability \& Machine Unlearning}\fi
-    \end{columns}%
+    \def\rmcur{#1}%
+    \ifcase#1\or\def\rmxcur{2.3}\or\def\rmxcur{7.0}\or\def\rmxcur{11.7}\fi
+    \centering
+    \begin{tikzpicture}
+        \path[use as bounding box] (0.2,-1.95) rectangle (13.8,0.95);
+        \draw[gray!25,line width=2.4pt,line cap=round] (1.1,0) -- (12.9,0);
+        \draw[themecolor!45,line width=2.4pt,line cap=round] (1.1,0) -- (\rmxcur,0);
+        \rmstation{2.3}{1}{go:theme}{Research Theme}
+        \rmstation{7.0}{2}{go:localize}{Knowledge Localization\\ \& Model Editing}
+        \rmstation{11.7}{3}{go:unlearn}{Data Interpretability\\ \& Machine Unlearning}
+    \end{tikzpicture}%
 }
 
 % Stylized benchmark name, echoing the display font used in the RESTOR paper.
@@ -369,3 +377,11 @@
     \end{tcolorbox}}
 
 \newcommand{\logoat}[3][3.3cm]{\adjustbox{max width=#1,max height=#3,valign=c}{\includegraphics{Figures/logos/#2}}}
+% Company mark set inside a ring, for the experience slide.
+\newcommand{\logocirc}[2]{%
+    \tikz[baseline=-0.55ex]{
+        \node[circle,draw=gray!35,fill=white,line width=0.7pt,
+            minimum size=1.15cm,inner sep=0pt] (c) at (0,0) {};
+        \node at (c) {\adjustbox{max width=#2,max height=#2}{\includegraphics{Figures/logos/#1}}};
+    }%
+}
