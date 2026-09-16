@@ -1427,9 +1427,9 @@
         \textcolor{xattn}{\textbf{ICLR 2026.}}}
 \end{frame}
 
-\begin{frame}{Which Checkpoint, and Why It Helps}
-    \vspace{0.4em}
-    \begin{itemize}\small\setlength\itemsep{0.7em}
+\begin{frame}[t]{Which Checkpoint, and Why It Helps}
+    \vspace{0.3em}
+    \begin{itemize}\small\setlength\itemsep{0.5em}
         \item \textbf{The intuition.} $\theta_C$ has never seen $\mathcal{D}_f$. Finetune it on
               $\mathcal{D}_f$ and the movement in weight space is \textbf{caused by that data alone}.
         \item \uncover<2->{\textbf{Why not $\theta_\mathcal{D}$?} It already absorbed $\mathcal{D}_f$.}
@@ -1437,6 +1437,45 @@
         \item \uncover<4->{\textbf{Why not just ship $\theta_C$?} The model learned a great deal
                     after that point.}
     \end{itemize}
+
+    \vfill
+    \centering
+    \begin{tikzpicture}[scale=0.92,font=\scriptsize,
+            ring/.style={circle,very thick,inner sep=0pt,minimum size=0.86cm}]
+        \path[use as bounding box] (-0.4,-1.35) rectangle (12.8,1.85);
+        \draw[->,>=stealth,gray!60,thick] (0,0) -- (12.6,0);
+        \node[font=\tiny,gray!50!black,anchor=south west] at (0.0,0.10) {training tokens $\rightarrow$};
+        \foreach \x/\i in {1.2/1, 2.6/2, 4.0/3, 5.4/4, 6.8/5, 9.1/6, 10.5/6} {
+                \node[inner sep=0pt] at (\x,0)
+                {\includegraphics[width=0.52cm]{Figures/msa/spark/s\i.png}};
+            }
+        \node[font=\tiny,text=xattn,inner sep=1pt] (dfm) at (8.0,0.62) {$\mathcal{D}_f$ enters};
+        \draw[xattn,->,>=stealth,thin] (dfm.south) -- (8.0,0.08);
+
+        % 1: the checkpoint that never saw the forget set
+        \node[ring,draw=themecolor,visible on=<1>] at (6.8,0) {};
+        \node[visible on=<1>,font=\tiny,text=themecolor,align=center] at (6.8,-0.82)
+        {$\theta_C$\\never saw $\mathcal{D}_f$};
+
+        % 2: the final model, already exposed
+        \node[ring,draw=xattn,visible on=<2>] at (10.5,0) {};
+        \node[visible on=<2>,font=\tiny,text=xattn,align=center] at (10.5,-0.82)
+        {$\theta_\mathcal{D}$\\already saw $\mathcal{D}_f$};
+
+        % 3: closer to the forget set is better
+        \node[ring,draw=closing,visible on=<3>] at (6.8,0) {};
+        \node[visible on=<3>,font=\tiny,text=closing,align=center] at (6.8,-0.82)
+        {closest:\\best};
+        \draw[visible on=<3>,gray!55,thick,decorate,decoration={brace,amplitude=4pt,mirror}]
+            (0.9,-0.42) -- (5.7,-0.42);
+        \node[visible on=<3>,font=\tiny,gray!50!black] at (3.3,-0.82) {earlier: works, less well};
+
+        % 4: what was learned after the checkpoint
+        \draw[visible on=<4>,themecolor,thick,decorate,decoration={brace,amplitude=5pt}]
+            (6.8,1.00) -- (10.5,1.00);
+        \node[visible on=<4>,font=\tiny\bfseries,text=themecolor,inner sep=1pt]
+            at (8.65,1.55) {learned after $\theta_C$};
+    \end{tikzpicture}
 \end{frame}
 
 \begin{frame}{MSA on TOFU: Closer to Ideal}
