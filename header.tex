@@ -292,6 +292,17 @@
 }
 \makeatother
 
+% Named point inside a table cell, for boxing rows afterwards.
+\newcommand{\rowmark}[1]{\tikz[remember picture,overlay,baseline]\coordinate (#1);}
+% Labelled box around a group of table rows (needs \rowmark at both corners).
+\newcommand{\rowbox}[4]{% #1 top-left mark, #2 bottom-right mark, #3 colour, #4 label
+    \draw[#3,thick,rounded corners=2pt]
+        ([xshift=-4pt,yshift=5.5pt]#1) rectangle ([xshift=4pt,yshift=-1.9pt]#2);
+    \path let \p1=(#1), \p2=(#2) in
+        node[anchor=west,font=\scriptsize\bfseries,text=#3,align=left]
+        at (\x2+9pt, {0.5*(\y1+\y2)+1.8pt}) {#4};
+}
+
 % Frame number in the footline; blanked for the back matter.
 \newcommand{\framenumtext}{\insertframenumber/\inserttotalframenumber}
 \newcounter{finalframe}
