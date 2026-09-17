@@ -1325,20 +1325,26 @@
             1   & 50.7                     & 42.2  & 45.2  & \textbf{64.9}  \\
             2   & 49.4                     & 32.7  & 41.8  & \textbf{62.8}  \\
             3   & 50.4                     & 34.9  & 47.5  & \textbf{64.0}  \\
-            4   & 45.7                     & 35.3  & 42.0  & \textbf{63.4}  \\
+            \rowmark{k4L}4   & 45.7                     & 35.3  & 42.0  & \textbf{63.4}\rowmark{k4R}  \\
             5   & 44.5                     & 38.0  & 44.7  & \textbf{63.9}  \\
             \bottomrule
         \end{tabular}}
 
     \vspace{0.4em}
-    {\scriptsize Accuracy (\%). Clean model: \textbf{65.8}.}
+    {\scriptsize Accuracy (\%). Clean model: \rowmark{clL}\textbf{65.8}\rowmark{clR}.}
 
     \vspace{0.9em}
-    \uncover<2->{\small GA and KL forget the corrupted knowledge, but push the model toward
+    \uncover<3->{\small GA and KL forget the corrupted knowledge, but push the model toward
         \textcolor{xattn}{\textbf{random}}.}
 
     \vspace{0.4em}
-    \uncover<2->{\small \textcolor{xattn}{\textbf{They forget, but fail to restore.}}}
+    \uncover<3->{\small \textcolor{xattn}{\textbf{They forget, but fail to restore.}}}%
+    \begin{tikzpicture}[remember picture,overlay]
+        \draw[visible on=<2->,xattn,thick,rounded corners=2pt]
+            ([xshift=-5pt,yshift=8.2pt]k4L) rectangle ([xshift=5pt,yshift=-3.2pt]k4R);
+        \draw[visible on=<2->,closing,thick,rounded corners=2pt]
+            ([xshift=-2.5pt,yshift=6.2pt]clL) rectangle ([xshift=2.5pt,yshift=-2.2pt]clR);
+    \end{tikzpicture}
 \end{frame}
 
 \begin{frame}{In the Limit, Nothing Comes Back}
