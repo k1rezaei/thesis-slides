@@ -59,3 +59,7 @@ by [Pingbang Hu](https://github.com/sleepymalc). Thank you.
 
 Figures are taken from the papers listed above; logos are public-domain files from Wikimedia
 Commons, used to identify their organizations.
+
+---
+
+<sub>README written by Claude Code, verified by Keivan Rezaei.</sub>
